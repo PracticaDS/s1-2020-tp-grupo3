@@ -38,7 +38,7 @@ class PostDetailFragment : BaseFragment() {
         }
 
         btn_edit.setOnClickListener {
-            PostDetailFragmentDirections.navActionEditPost()
+            findNavController().navigate(PostDetailFragmentDirections.navActionEditPost(args.postId))
         }
 
     }
