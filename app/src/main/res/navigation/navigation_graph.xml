@@ -26,7 +26,16 @@
         android:id="@+id/postEditFragment"
         android:name="ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditFragment"
         android:label="PostEditFragment"
-        tools:layout="@layout/fragment_post_edit" />
+        tools:layout="@layout/fragment_post_edit" >
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/nav_action_update_post"
+            app:popUpTo="@id/postEditFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/postDetailFragment"
