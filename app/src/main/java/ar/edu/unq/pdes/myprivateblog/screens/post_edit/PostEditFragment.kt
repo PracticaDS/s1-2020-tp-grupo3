@@ -2,7 +2,6 @@ package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -36,31 +35,6 @@ class PostEditFragment : BaseFragment() {
         viewModel.post.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 renderBlogEntry(it)
-            }
-        })
-
-
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
-
-                PostEditViewModel.State.ERROR -> {
-                    title.error = "Debe tener algún título"
-                    val textMsg = "Error al guardar el post"
-                    val durationT = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
-                    toast.show()
-                }
-
-                PostEditViewModel.State.SUCCESS -> {
-                    findNavController().navigate(
-                        PostEditFragmentDirections.navActionUpdatePost(
-                            viewModel.post.value!!.uid
-                        )
-                    )
-                }
-
-                else -> { /* Do nothing, should not happen*/
-                }
             }
         })
 
@@ -136,6 +110,7 @@ class PostEditFragment : BaseFragment() {
 
     fun renderBlogEntry(post: BlogEntry) {
         title.setText(post.title)
+
         header_background.setBackgroundColor(post.cardColor)
         applyStatusBarStyle(post.cardColor)
         title.setTextColor(ColorUtils.findTextColorGivenBackgroundColor(post.cardColor))
