@@ -38,6 +38,26 @@ class PostEditFragment : BaseFragment() {
             }
         })
 
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when (it) {
+
+                PostEditViewModel.State.ERROR -> {
+                    // TODO: manage error states
+                }
+
+                PostEditViewModel.State.SUCCESS -> {
+                    findNavController().navigate(
+                        PostEditFragmentDirections.navActionUpdatePost(
+                            viewModel.post.value!!.uid
+                        )
+                    )
+                }
+
+                else -> { /* Do nothing, should not happen*/
+                }
+            }
+        })
+
         btn_close.setOnClickListener {
             closeAndGoBack()
         }
@@ -110,7 +130,6 @@ class PostEditFragment : BaseFragment() {
 
     fun renderBlogEntry(post: BlogEntry) {
         title.setText(post.title)
-
         header_background.setBackgroundColor(post.cardColor)
         applyStatusBarStyle(post.cardColor)
         title.setTextColor(ColorUtils.findTextColorGivenBackgroundColor(post.cardColor))

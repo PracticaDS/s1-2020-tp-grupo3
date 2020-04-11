@@ -4,11 +4,16 @@ import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
+import io.reactivex.Flowable
+import java.io.OutputStreamWriter
+import java.util.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 
 class PostEditViewModel @Inject constructor(
@@ -24,7 +29,7 @@ class PostEditViewModel @Inject constructor(
     val bodyText = MutableLiveData("")
     val cardColor = MutableLiveData<Int>(Color.LTGRAY)
 
-    var post = MutableLiveData<BlogEntry?>()
+    val post = MutableLiveData<BlogEntry?>()
 
     fun fetchBlogEntry(id: EntityID) {
 
@@ -33,11 +38,33 @@ class PostEditViewModel @Inject constructor(
             .compose(RxSchedulers.flowableAsync())
             .subscribe {
                 post.value = it
+                cardColor.value = it.cardColor
             }
     }
 
     fun updatePost() {
-        //TODO
+        val disposable = Flowable.fromCallable {
+            val fileName = UUID.randomUUID().toString() + ".body"
+            val outputStreamWriter =
+                OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+            outputStreamWriter.use { it.write(bodyText.value) }
+            fileName
+
+        }.flatMapCompletable {
+            val colorToUpdate : Int = cardColor.value!!
+
+            blogEntriesRepository.updateBlogEntry(
+                BlogEntry(
+                    uid = post.value!!.uid,
+                    bodyPath = it,
+                    title = titleText.value.toString(),
+                    cardColor = colorToUpdate
+                )
+            )
+
+        }.compose(RxSchedulers.completableAsync()).subscribe {
+            state.value = State.SUCCESS
+        }
 
     }
 }
