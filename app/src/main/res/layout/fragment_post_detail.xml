@@ -40,11 +40,9 @@
         android:background="#00FFFFFF"
         android:foreground="?attr/selectableItemBackground"
         android:padding="12dp"
-        android:src="@drawable/ic_edit"
+        android:src="@drawable/ic_delete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_close"
-        tools:srcCompat="@drawable/ic_close" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
