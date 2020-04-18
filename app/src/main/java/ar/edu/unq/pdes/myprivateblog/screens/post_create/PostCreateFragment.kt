@@ -2,6 +2,7 @@ package ar.edu.unq.pdes.myprivateblog.screens.post_create
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -29,7 +30,11 @@ class PostCreateFragment : BaseFragment() {
             when (it) {
 
                 PostCreateViewModel.State.ERROR -> {
-                    // TODO: manage error states
+                    title.error = "Debe tener algún título"
+                    val textMsg = "Error al guardar el post"
+                    val durationT = Toast.LENGTH_SHORT
+                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
+                    toast.show()
                 }
 
                 PostCreateViewModel.State.SUCCESS -> {

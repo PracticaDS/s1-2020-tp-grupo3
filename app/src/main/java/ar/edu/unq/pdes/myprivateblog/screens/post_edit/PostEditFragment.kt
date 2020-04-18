@@ -2,6 +2,7 @@ package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -38,11 +39,16 @@ class PostEditFragment : BaseFragment() {
             }
         })
 
+
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (it) {
 
                 PostEditViewModel.State.ERROR -> {
-                    // TODO: manage error states
+                    title.error = "Debe tener algún título"
+                    val textMsg = "Error al guardar el post"
+                    val durationT = Toast.LENGTH_SHORT
+                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
+                    toast.show()
                 }
 
                 PostEditViewModel.State.SUCCESS -> {
