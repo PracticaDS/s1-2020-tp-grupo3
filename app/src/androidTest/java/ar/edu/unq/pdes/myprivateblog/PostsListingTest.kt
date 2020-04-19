@@ -1,11 +1,16 @@
 package ar.edu.unq.pdes.myprivateblog
 
 import android.graphics.Color
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -86,6 +91,60 @@ fun withTintColor(expectedColor: Int): Matcher<View?>? {
         override fun matchesSafely(view: View): Boolean {
             return view.backgroundTintList?.defaultColor == expectedColor
         }
+    }
+
+    @Test
+    fun whenTappingOnNewPost_ShouldCreatePostAndShouldAppearInList() {
+
+        onView(withId(R.id.create_new_post))
+            .perform(click())
+
+        onView(withId(R.id.title)).perform(clearText())
+
+        onView(withId(R.id.title))
+            .perform(click(), ViewActions.replaceText("Nuevo test post"))
+
+        onView(withId(R.id.btn_save))
+            .perform(click())
+
+        onView(withId(R.id.btn_back))
+            .perform(click())
+
+        //tenemos que integrar commit ari para que se pueda correr test tranqui sino este onView por ej rompe
+        onView(withId(R.id.posts_list_recyclerview))
+            .check(CustomMatchers.hasItemCount(1))
+
+        onView(withId(R.id.posts_list_recyclerview))
+            .check(matches(CustomMatchers.atPosition(0, hasDescendant(withText("Nuevo test post")))))
+
+        val colorPicked = Color.LTGRAY;
+
+        onView(withId(R.id.posts_list_recyclerview))
+            .check(matches(CustomMatchers.atPosition(0, hasDescendant(CustomMatchers.withTintColor(colorPicked)))))
+    }
+
+    @Test
+    fun whenTappingOnNewPost_ShouldCreatePostAndShouldBeAbleToOpenIt() {
+
+        onView(withId(R.id.create_new_post))
+            .perform(click())
+
+        onView(withId(R.id.title)).perform(clearText())
+
+        onView(withId(R.id.title))
+            .perform(click(), ViewActions.replaceText("Nuevo test post"))
+
+        onView(withId(R.id.btn_save))
+            .perform(click())
+
+        onView(withId(R.id.btn_back))
+            .perform(click())
+
+        onView(withId(R.id.posts_list_recyclerview))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+
+        onView(withId(R.id.title))
+            .check(matches(withText("Nuevo test post")))
     }
 }
 //

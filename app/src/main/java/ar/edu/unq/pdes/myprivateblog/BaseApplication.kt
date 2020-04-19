@@ -5,6 +5,7 @@ import ar.edu.unq.pdes.myprivateblog.di.DaggerApplicationComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import org.wordpress.aztec.BuildConfig
 import timber.log.Timber
 import javax.inject.Inject
 
