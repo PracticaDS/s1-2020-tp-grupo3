@@ -10,6 +10,7 @@ import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import io.reactivex.Flowable
+import timber.log.Timber
 import java.io.OutputStreamWriter
 import java.util.*
 import javax.inject.Inject
@@ -54,10 +55,9 @@ class PostDetailViewModel @Inject constructor(
                     uid = post.value!!.uid
                 ))
 
-        }.compose(RxSchedulers.completableAsync()).subscribe {
+        }.compose(RxSchedulers.completableAsync()).subscribe({
             state.value = State.SUCCESS
-        }
-
-
+        },{throwable -> state.value = State.ERROR
+            Timber.e(throwable)})
     }
 }
