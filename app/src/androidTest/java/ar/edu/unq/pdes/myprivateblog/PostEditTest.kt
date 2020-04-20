@@ -5,6 +5,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+
 import androidx.test.espresso.web.assertion.WebViewAssertions.webMatches
 import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms.findElement
@@ -19,9 +20,11 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.TypeSafeMatcher
+
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
 
 
 @RunWith(AndroidJUnit4::class)
@@ -135,6 +138,7 @@ class PostEditTest {
         onView(withText("Error al guardar el post")).inRoot(MatcherUtils.ToastMatcher())
             .check(matches(isDisplayed()))
     }
+
 
 
 

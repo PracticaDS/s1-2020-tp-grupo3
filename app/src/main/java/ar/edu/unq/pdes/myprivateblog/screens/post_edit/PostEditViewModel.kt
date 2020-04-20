@@ -34,6 +34,7 @@ class PostEditViewModel @Inject constructor(
 
     val errorMsg = MutableLiveData("")
 
+
     val post = MutableLiveData<BlogEntry?>()
 
     fun fetchBlogEntry(id: EntityID) {
@@ -52,9 +53,11 @@ class PostEditViewModel @Inject constructor(
             if(titleText.value.toString().isBlank()){
                 throw IllegalArgumentException()
             }
+
             val fileName = UUID.randomUUID().toString() + ".body"
             val outputStreamWriter =
-                OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+                
+          StreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
             outputStreamWriter.use { it.write(bodyText.value) }
             fileName
 

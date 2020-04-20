@@ -49,6 +49,7 @@ class PostEditFragment : BaseFragment() {
                     val durationT = Toast.LENGTH_SHORT
                     val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
                     toast.show()
+
                 }
 
                 PostEditViewModel.State.SUCCESS -> {
@@ -63,6 +64,7 @@ class PostEditFragment : BaseFragment() {
                 }
             }
         })
+
 
         btn_close.setOnClickListener {
             closeAndGoBack()
