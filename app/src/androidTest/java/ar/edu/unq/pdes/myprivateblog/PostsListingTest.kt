@@ -1,7 +1,6 @@
 package ar.edu.unq.pdes.myprivateblog
 
 import android.graphics.Color
-
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import androidx.test.espresso.Espresso.onView
@@ -18,6 +17,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -78,18 +79,9 @@ class PostsListingTest {
     }
 
 
-}
 
 
-        override fun describeTo(description: Description) {
-            description.appendText("Checking the matcher on received view: ")
-            description.appendText("with expectedStatus=$expectedColor")
-        }
 
-        override fun matchesSafely(view: View): Boolean {
-            return view.backgroundTintList?.defaultColor == expectedColor
-        }
-    }
 
     @Test
     fun whenTappingOnNewPost_ShouldCreatePostAndShouldAppearInList() {

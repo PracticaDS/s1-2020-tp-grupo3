@@ -56,8 +56,8 @@ class PostEditViewModel @Inject constructor(
 
             val fileName = UUID.randomUUID().toString() + ".body"
             val outputStreamWriter =
-                
-          StreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+
+        OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
             outputStreamWriter.use { it.write(bodyText.value) }
             fileName
 
