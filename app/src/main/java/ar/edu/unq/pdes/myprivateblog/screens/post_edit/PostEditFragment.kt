@@ -73,14 +73,7 @@ class PostEditFragment : BaseFragment() {
 
 
         viewModel.cardColor.observe(viewLifecycleOwner, Observer {
-            header_background.setBackgroundColor(it)
-            val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(it)
-            title.setTextColor(itemsColor)
-            title.setHintTextColor(itemsColor)
-            btn_save.setColorFilter(itemsColor)
-            btn_close.setColorFilter(itemsColor)
-
-            applyStatusBarStyle(it)
+            renderHeaderColor(it)
         })
 
         title.doOnTextChanged { text, start, count, after ->
@@ -148,5 +141,16 @@ class PostEditFragment : BaseFragment() {
 
     private fun closeAndGoBack() {
         findNavController().navigateUp()
+    }
+
+    private fun renderHeaderColor(color:Int){
+        header_background.setBackgroundColor(color)
+        val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(color)
+        title.setTextColor(itemsColor)
+        title.setHintTextColor(itemsColor)
+        btn_save.setColorFilter(itemsColor)
+        btn_close.setColorFilter(itemsColor)
+
+        applyStatusBarStyle(color)
     }
 }
