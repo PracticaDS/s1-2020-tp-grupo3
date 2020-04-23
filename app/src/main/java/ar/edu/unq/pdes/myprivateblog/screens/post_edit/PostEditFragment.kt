@@ -2,7 +2,6 @@ package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -12,14 +11,9 @@ import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import androidx.lifecycle.Observer
+import ar.edu.unq.pdes.myprivateblog.setAztec
 import kotlinx.android.synthetic.main.fragment_post_edit.*
-import org.wordpress.aztec.Aztec
-import org.wordpress.aztec.ITextFormat
-import org.wordpress.aztec.glideloader.GlideImageLoader
-import org.wordpress.aztec.glideloader.GlideVideoThumbnailLoader
-import org.wordpress.aztec.toolbar.IAztecToolbarClickListener
 import timber.log.Timber
-import java.io.File
 
 class PostEditFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_edit
@@ -39,30 +33,27 @@ class PostEditFragment : BaseFragment() {
             }
         })
 
+        viewModel.bodyHtml.observe(viewLifecycleOwner, Observer {
+            if (it != null){
+                body.fromHtml(it)
+            }
+        })
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
 
-                PostEditViewModel.State.ERROR -> {
-                    title.error = "Debe tener algún título"
-                    val textMsg = "Error al guardar el post"
-                    val durationT = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
-                    toast.show()
 
-                }
-
-                PostEditViewModel.State.SUCCESS -> {
-                    findNavController().navigate(
-                        PostEditFragmentDirections.navActionUpdatePost(
-                            viewModel.post.value!!.uid
-                        )
-                    )
-                }
-
-                else -> { /* Do nothing, should not happen*/
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                renderError(it)
+            }
+            else{
+                viewModel.post.value?.let {post -> PostEditFragmentDirections.navActionUpdatePost(post.uid) }?.let {
+                        id ->
+                                findNavController().navigate(
+                                    id
+                                )
                 }
             }
+
         })
 
 
@@ -98,45 +89,16 @@ class PostEditFragment : BaseFragment() {
         }
 
         context?.apply {
-            Aztec.with(body, source, formatting_toolbar, object : IAztecToolbarClickListener {
-                override fun onToolbarCollapseButtonClicked() {
-                }
-
-                override fun onToolbarExpandButtonClicked() {
-                }
-
-                override fun onToolbarFormatButtonClicked(
-                    format: ITextFormat,
-                    isKeyboardShortcut: Boolean
-                ) {
-                }
-
-                override fun onToolbarHeadingButtonClicked() {
-                }
-
-                override fun onToolbarHtmlButtonClicked() {
-                }
-
-                override fun onToolbarListButtonClicked() {
-                }
-
-                override fun onToolbarMediaButtonClicked(): Boolean = false
-
-            })
-                .setImageGetter(GlideImageLoader(this))
-                .setVideoThumbnailGetter(GlideVideoThumbnailLoader(this))
+            this.setAztec(body, source, formatting_toolbar)
         }
 
     }
 
-    fun renderBlogEntry(post: BlogEntry) {
+    private fun renderBlogEntry(post: BlogEntry) {
         title.setText(post.title)
         header_background.setBackgroundColor(post.cardColor)
         applyStatusBarStyle(post.cardColor)
         title.setTextColor(ColorUtils.findTextColorGivenBackgroundColor(post.cardColor))
-        if (post.bodyPath != null && context != null) {
-            body.fromHtml(File(context?.filesDir, post.bodyPath).readText())
-        }
     }
 
     private fun closeAndGoBack() {
@@ -152,5 +114,15 @@ class PostEditFragment : BaseFragment() {
         btn_close.setColorFilter(itemsColor)
 
         applyStatusBarStyle(color)
+    }
+
+    private fun renderError(errorState: ErrorState){
+        title.isEnabled = true
+        body.isEnabled = true
+        showError(errorState.getErrorMessage())
+        if(errorState.getType() == ErrorState.ErrorType.VALIDATION){
+            title.error = resources.getString(R.string.post_without_title)
+            btn_save.isEnabled = false
+        }
     }
 }

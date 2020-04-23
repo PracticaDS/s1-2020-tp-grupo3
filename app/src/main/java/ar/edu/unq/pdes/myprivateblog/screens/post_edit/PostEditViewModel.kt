@@ -4,79 +4,78 @@ import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
-import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
-import io.reactivex.Flowable
-import timber.log.Timber
-import java.io.OutputStreamWriter
-import java.util.*
-import java.util.logging.Level
-import java.util.logging.Logger
+import ar.edu.unq.pdes.myprivateblog.services.PostService
+import java.io.File
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 
 class PostEditViewModel @Inject constructor(
-    val blogEntriesRepository: BlogEntriesRepository,
+    val postService: PostService,
     val context: Context
 ) : ViewModel() {
-    enum class State {
-        EDITING, SUCCESS, ERROR
-    }
 
-    val state = MutableLiveData(State.EDITING)
     val titleText = MutableLiveData("")
     val bodyText = MutableLiveData("")
     val cardColor = MutableLiveData<Int>(Color.LTGRAY)
+    val bodyHtml = MutableLiveData("")
 
-    val errorMsg = MutableLiveData("")
-
+    val errors = MutableLiveData<ErrorState?>()
 
     val post = MutableLiveData<BlogEntry?>()
 
-    fun fetchBlogEntry(id: EntityID) {
 
-        val disposable = blogEntriesRepository
-            .fetchById(id)
-            .compose(RxSchedulers.flowableAsync())
-            .subscribe {
-                post.value = it
-                cardColor.value = it.cardColor
-            }
+    fun fetchBlogEntry(id: EntityID) {
+        val disp = postService.fetchPost(id).map {
+            bodyHtml.value = File(context.filesDir, it.bodyPath).readText()
+            it
+        }.subscribe{
+            post.value = it
+            cardColor.value = it.cardColor
+        }
     }
 
+
     fun updatePost() {
-        val disposable = Flowable.fromCallable {
-            if(titleText.value.toString().isBlank()){
-                throw IllegalArgumentException()
-            }
+        if(titleText.value.toString().isBlank()){
+            errors.value = ErrorState.validationError()
+            return
+        }
+        val disp = postService.updatePost(post.value!!.uid,cardColor.value!!,bodyText.value!!,titleText.value!!)
+            .subscribe({
+                errors.value = null
+            },{throwable -> errors.value = ErrorState.error(throwable)
+            })
 
-            val fileName = UUID.randomUUID().toString() + ".body"
-            val outputStreamWriter =
+    }
+}
 
-        OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
-            outputStreamWriter.use { it.write(bodyText.value) }
-            fileName
+data class ErrorState private constructor(
+    private val type: ErrorType? = ErrorType.SYSTEM,
+    private val errorMessage: String? = null,
+    private val throwable: Throwable? = null
+) {
+    companion object {
+        fun error(error: Throwable) = ErrorState(throwable = error,errorMessage = error.message, type = ErrorType.SYSTEM)
+        fun validationError() = ErrorState(type = ErrorType.VALIDATION)
+    }
 
-        }.flatMapCompletable {
-            val colorToUpdate : Int = cardColor.value!!
+    enum class ErrorType {
+        SYSTEM, VALIDATION
+    }
 
-            blogEntriesRepository.updateBlogEntry(
-                BlogEntry(
-                    uid = post.value!!.uid,
-                    bodyPath = it,
-                    title = titleText.value.toString(),
-                    cardColor = colorToUpdate
-                )
-            )
+    fun getErrorMessage() : String {
+        if (errorMessage != null) {
+            return errorMessage
+        }
+        throw IllegalStateException("errorMessage shouldn't be null")
+    }
 
-        }.compose(RxSchedulers.completableAsync()).subscribe ({
-            state.value = State.SUCCESS
-    },{throwable -> state.value = State.ERROR
-        Timber.e(throwable)});
-
+    fun getType() : ErrorType {
+        if (type != null) {
+            return type
+        }
+        throw IllegalStateException("type shouldn't be null")
     }
 }
