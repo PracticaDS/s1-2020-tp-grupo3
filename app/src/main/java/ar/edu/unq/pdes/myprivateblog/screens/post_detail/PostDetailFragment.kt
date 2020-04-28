@@ -34,24 +34,6 @@ class PostDetailFragment : BaseFragment() {
             }
         })
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
-
-                PostDetailViewModel.State.ERROR -> {
-                    title.error = "Something went wrong deleting"
-                    val textMsg = "Try again later"
-                    val durationT = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
-                    toast.show()
-                }
-
-                PostDetailViewModel.State.SUCCESS -> {
-                    findNavController().navigateUp()
-                }
-                else -> {}
-            }
-        })
-
         btn_back.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -62,7 +44,7 @@ class PostDetailFragment : BaseFragment() {
 
         btn_delete.setOnClickListener {
             viewModel.deletePost()
-//            findNavController().navigateUp()
+            findNavController().navigateUp()
         }
     }
 
