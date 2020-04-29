@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.fragment_post_edit.*
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.ITextFormat
@@ -21,9 +22,11 @@ class PostCreateFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_edit
 
     private val viewModel by viewModels<PostCreateViewModel> { viewModelFactory }
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context!!);
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -66,6 +69,7 @@ class PostCreateFragment : BaseFragment() {
         }
 
         btn_save.setOnClickListener {
+            firebaseAnalytics.logEvent("post_created", Bundle())
             viewModel.createPost()
         }
 
