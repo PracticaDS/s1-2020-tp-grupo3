@@ -48,8 +48,10 @@ class PostDetailViewModel @Inject constructor(
         }.flatMapCompletable  {
             blogEntriesRepository.deleteBlogEntry(
                 BlogEntry(uid = post.value!!.uid))
-        }.compose(RxSchedulers.completableAsync()).subscribe({ succesMessage.postValue(SimpleSuccesMessage(R.string.succes_msg_post_was_removed))
-        },{throwable -> errorMessage.value = SimpleErrorMessage(R.string.error_msg_something_went_wrong_deleting)
+        }.compose(RxSchedulers.completableAsync()).subscribe({
+            succesMessage.postValue(SimpleSuccesMessage(R.string.succes_msg_post_was_removed))
+        },{throwable ->
+            errorMessage.value = SimpleErrorMessage(R.string.error_msg_something_went_wrong_deleting)
             Timber.e(throwable)})
     }
 

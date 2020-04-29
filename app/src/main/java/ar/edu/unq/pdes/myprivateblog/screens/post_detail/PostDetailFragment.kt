@@ -38,13 +38,13 @@ class PostDetailFragment : BaseFragment() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
             viewModel.errorMessage.value?.let{
-                viewModel.context.longToast(getString(it.title))
+                context?.longToast(getString(it.title))
             }
         })
 
         viewModel.succesMessage.observe(viewLifecycleOwner, Observer {
             viewModel.succesMessage.value?.let{
-                viewModel.context.longToast(getString(it.title))
+                context?.longToast(getString(it.title))
                 findNavController().navigateUp()
             }
         })
