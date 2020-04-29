@@ -64,20 +64,6 @@ class PostEditTest {
         onView(ViewMatchers.withId(R.id.title)).check(matches(withText("Nuevo Titulo")))
     }
 
-    @Test
-    fun whenTapingOnDeletePostButton_postShouldBeRemoved(){
-        postCreation()
-
-        onView(withId(R.id.btn_delete)).check(ViewAssertions.matches(isDisplayed()))
-
-        onView(withId(R.id.btn_delete)).perform(ViewActions.click())
-
-        onView(withId(R.id.create_new_post)).check(ViewAssertions.matches(isDisplayed()))
-
-        onView(withId(R.id.posts_list_recyclerview))
-            .check(CustomMatchers.hasItemCount(0))
-    }
-
 }
 
 fun postCreation(){
