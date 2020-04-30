@@ -1,5 +1,6 @@
 package ar.edu.unq.pdes.myprivateblog.screens.post_detail
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
@@ -14,6 +15,8 @@ import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import kotlinx.android.synthetic.main.fragment_post_detail.*
 import java.io.File
+import android.widget.Toast
+import ar.edu.unq.pdes.myprivateblog.utils.longToast
 
 class PostDetailFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_detail
@@ -33,6 +36,19 @@ class PostDetailFragment : BaseFragment() {
             }
         })
 
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            viewModel.errorMessage.value?.let{
+                context?.longToast(getString(it.title))
+            }
+        })
+
+        viewModel.succesMessage.observe(viewLifecycleOwner, Observer {
+            viewModel.succesMessage.value?.let{
+                context?.longToast(getString(it.title))
+                findNavController().navigateUp()
+            }
+        })
+
         btn_back.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -41,6 +57,9 @@ class PostDetailFragment : BaseFragment() {
             findNavController().navigate(PostDetailFragmentDirections.navActionEditPost(args.postId))
         }
 
+        btn_delete.setOnClickListener {
+            viewModel.deletePost()
+        }
     }
 
     fun renderBlogEntry(post: BlogEntry) {
