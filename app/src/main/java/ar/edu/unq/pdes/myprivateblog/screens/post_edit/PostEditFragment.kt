@@ -1,19 +1,24 @@
 package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
-import androidx.lifecycle.Observer
 import ar.edu.unq.pdes.myprivateblog.setAztec
 import kotlinx.android.synthetic.main.fragment_post_edit.*
 import timber.log.Timber
+
 
 class PostEditFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_edit
@@ -67,9 +72,32 @@ class PostEditFragment : BaseFragment() {
             renderHeaderColor(it)
         })
 
-        title.doOnTextChanged { text, start, count, after ->
-            viewModel.titleText.postValue(text.toString())
-        }
+        /*title.doOnTextChanged { text, start, count, after ->
+            if(text.isNullOrEmpty()){
+                Toast.makeText(activity?.applicationContext,"Enter a title please",Toast.LENGTH_SHORT)
+            }else{
+                viewModel.titleText.postValue(text.toString())
+            }
+        }*/
+
+        title.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {}
+
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+                if(title.text.isNullOrEmpty()){
+                    Toast.makeText(activity?.applicationContext,"Enter a title please",Toast.LENGTH_SHORT)
+                }else{
+                    viewModel.titleText.postValue(title.text.toString())
+                }
+            }
+        })
 
         body.doOnTextChanged { text, start, count, after ->
             viewModel.bodyText.value = body.toFormattedHtml()
