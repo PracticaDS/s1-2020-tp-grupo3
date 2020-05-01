@@ -4,7 +4,6 @@ import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
@@ -74,9 +73,26 @@ class PostsListingTest {
 //        onView(withId(R.id.body)).check(
 //            matches(withWebViewTextMatcher(bodyText))
 //        )
-
     }
 
+    @Test
+    fun whenThereAreNoPosts_PostsListingHasAVisibleBackground(){
+        onView(withId(R.id.posts_list_recyclerview))
+            .check(CustomMatchers.hasItemCount(0))
+
+        onView(withId(R.id.empty_concept_illustration_l))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
+
+    @Test
+    fun whenThereArePosts_PostsListingHasAnInvisibleBackground(){
+        postCreation()
+        onView(withId(R.id.btn_back)).perform(click())
+
+        onView(withId(R.id.empty_concept_illustration_l))
+            .check(matches(withEffectiveVisibility(Visibility.INVISIBLE)))
+    }
 
 }
 
