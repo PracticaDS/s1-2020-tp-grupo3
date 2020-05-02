@@ -1,10 +1,11 @@
 package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
@@ -72,14 +73,6 @@ class PostEditFragment : BaseFragment() {
             renderHeaderColor(it)
         })
 
-        /*title.doOnTextChanged { text, start, count, after ->
-            if(text.isNullOrEmpty()){
-                Toast.makeText(activity?.applicationContext,"Enter a title please",Toast.LENGTH_SHORT)
-            }else{
-                viewModel.titleText.postValue(text.toString())
-            }
-        }*/
-
         title.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(
@@ -87,13 +80,21 @@ class PostEditFragment : BaseFragment() {
                 count: Int, after: Int
             ) {}
 
+            @SuppressLint("ResourceType")
             override fun onTextChanged(
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                if(title.text.isNullOrEmpty()){
-                    Toast.makeText(activity?.applicationContext,"Enter a title please",Toast.LENGTH_SHORT)
+
+                if(title.text.isNullOrEmpty() ){
+                    btn_save.isEnabled = false
+                    btn_save.isClickable = false
+                    btn_save.setColorFilter(Color.RED)
+                    Toast.makeText(context,"Enter a title please",Toast.LENGTH_SHORT).show()
                 }else{
+                    btn_save.isEnabled = true
+                    btn_save.isClickable = true
+                    btn_save.setColorFilter(R.color.colorPrimaryDark)
                     viewModel.titleText.postValue(title.text.toString())
                 }
             }

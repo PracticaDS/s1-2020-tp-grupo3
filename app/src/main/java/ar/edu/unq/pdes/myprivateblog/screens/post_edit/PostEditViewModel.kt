@@ -53,7 +53,7 @@ class PostEditViewModel @Inject constructor(
 
 data class ErrorState private constructor(
     private val type: ErrorType? = ErrorType.SYSTEM,
-    private val errorMessage: String? = null,
+    private val errorMessage: String? = "error",
     private val throwable: Throwable? = null
 ) {
     companion object {
