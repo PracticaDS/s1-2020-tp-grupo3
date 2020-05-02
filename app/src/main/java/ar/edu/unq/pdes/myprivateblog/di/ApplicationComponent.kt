@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import ar.edu.unq.pdes.myprivateblog.BaseApplication
 import ar.edu.unq.pdes.myprivateblog.MainActivity
 import ar.edu.unq.pdes.myprivateblog.MainActivityViewModel
-import ar.edu.unq.pdes.myprivateblog.data.AppDatabase
-import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
-import ar.edu.unq.pdes.myprivateblog.data.GoogleAnalytics
-import ar.edu.unq.pdes.myprivateblog.data.TrackEvents
+import ar.edu.unq.pdes.myprivateblog.data.*
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_detail.PostDetailFragment
@@ -30,7 +27,8 @@ import javax.inject.Singleton
     modules = [
         AndroidSupportInjectionModule::class,
         ApplicationModule::class,
-        MainActivityModule::class
+        MainActivityModule::class,
+        GoogleAnalytics::class
     ])
 interface ApplicationComponent : AndroidInjector<BaseApplication> {
 
@@ -57,12 +55,12 @@ open class ApplicationModule {
 }
 
 @Module
-open class FirebaseAnalytics {
+open class GoogleAnalytics {
 
     @Singleton
     @Provides
-    fun provideTrackEvents(context:Context,nameOfEvent : String): TrackEvents {
-        return GoogleAnalytics(FirebaseAnalytics.getInstance(context),nameOfEvent)
+    fun provideTrackEvents(context:Context): EventTracker {
+        return GoogleAnalytics(FirebaseAnalytics.getInstance(context))
     }
 }
 

@@ -10,7 +10,6 @@ import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import kotlinx.android.synthetic.main.fragment_post_edit.*
-import  ar.edu.unq.pdes.myprivateblog.di.FirebaseAnalytics
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.ITextFormat
 import org.wordpress.aztec.glideloader.GlideImageLoader
@@ -67,7 +66,6 @@ class PostCreateFragment : BaseFragment() {
         }
 
         btn_save.setOnClickListener {
-            FirebaseAnalytics().provideTrackEvents(context!!,"create_post_prueba").trackEvent()
             viewModel.createPost()
         }
 

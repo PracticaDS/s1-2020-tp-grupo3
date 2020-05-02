@@ -5,21 +5,19 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
 
-interface TrackEvents  {
-    fun trackEvent() {}
+interface EventTracker  {
+    fun logEvent(nameOfEvent : String) {}
 }
 
-class GoogleAnalytics(firebaseAnalytics: FirebaseAnalytics, nameOfEvent : String) : TrackEvents{
+class GoogleAnalytics(firebaseAnalytics: FirebaseAnalytics) : EventTracker{
 
     var analytics: FirebaseAnalytics
-    var nameOfEvent : String
 
     init {
         this.analytics = firebaseAnalytics
-        this.nameOfEvent = nameOfEvent
     }
 
-    override fun trackEvent() {
+    override fun logEvent(nameOfEvent: String) {
         val params = Bundle()
         analytics.logEvent(nameOfEvent, params)
     }
