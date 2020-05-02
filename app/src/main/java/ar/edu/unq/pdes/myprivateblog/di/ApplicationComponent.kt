@@ -7,6 +7,8 @@ import ar.edu.unq.pdes.myprivateblog.MainActivity
 import ar.edu.unq.pdes.myprivateblog.MainActivityViewModel
 import ar.edu.unq.pdes.myprivateblog.data.AppDatabase
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
+import ar.edu.unq.pdes.myprivateblog.data.GoogleAnalytics
+import ar.edu.unq.pdes.myprivateblog.data.TrackEvents
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_detail.PostDetailFragment
@@ -15,6 +17,7 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingFragment
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.*
 import dagger.android.AndroidInjector
 import dagger.android.ContributesAndroidInjector
@@ -50,6 +53,16 @@ open class ApplicationModule {
     @Provides
     fun provideBlogEntriesRepository(appDatabase: AppDatabase): BlogEntriesRepository {
         return BlogEntriesRepository(appDatabase)
+    }
+}
+
+@Module
+open class FirebaseAnalytics {
+
+    @Singleton
+    @Provides
+    fun provideTrackEvents(context:Context,nameOfEvent : String): TrackEvents {
+        return GoogleAnalytics(FirebaseAnalytics.getInstance(context),nameOfEvent)
     }
 }
 

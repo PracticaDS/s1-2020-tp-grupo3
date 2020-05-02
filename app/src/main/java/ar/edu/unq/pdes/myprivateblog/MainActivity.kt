@@ -19,14 +19,9 @@ class MainActivity : DaggerAppCompatActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "some_tests")
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM, bundle)
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
 
         setContentView(R.layout.activity_main)
