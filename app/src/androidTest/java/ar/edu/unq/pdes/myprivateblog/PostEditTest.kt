@@ -2,10 +2,11 @@ package ar.edu.unq.pdes.myprivateblog
 
 import android.graphics.Color
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-
 import androidx.test.espresso.web.assertion.WebViewAssertions.webMatches
 import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms.findElement
@@ -140,7 +141,29 @@ class PostEditTest {
     }
 
 
+}
 
+fun postCreation(){
+    onView(withId(R.id.create_new_post))
+        .perform(click())
 
+    val postTitle = "post1"
 
+    onView(withId(R.id.title))
+        .perform(typeText(postTitle))
+
+    val bodyText = "This is the body"
+    onView(withId(R.id.body))
+        .perform(typeText(bodyText))
+
+    val pickedColor = Color.parseColor("#b39ddb")
+
+    onView(withTintColor(pickedColor))
+        .perform(click())
+
+    onView(withId(R.id.btn_save))
+        .perform(click())
+
+    onView(withId(R.id.title))
+        .check(matches(withText(postTitle)))
 }

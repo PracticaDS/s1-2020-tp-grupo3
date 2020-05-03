@@ -2,4 +2,7 @@
     <string name="app_name">MyPrivateBlog</string>
     <string name="hint_post_title">Título del post</string>
     <string name="post_without_title">El post debe tener un título</string>
+    <string name="post_listing_background_description"> This background is only shown when there are no posts </string>
+    <string name="error_msg_something_went_wrong_deleting">Something went wrong deleting</string>
+    <string name="succes_msg_post_was_removed">Post was removed</string>
 </resources>

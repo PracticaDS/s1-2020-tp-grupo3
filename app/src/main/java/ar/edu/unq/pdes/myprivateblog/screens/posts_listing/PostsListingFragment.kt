@@ -35,12 +35,16 @@ class PostsListingFragment : BaseFragment() {
         }
 
         viewModel.posts.observe(viewLifecycleOwner, Observer { postList ->
+            if(viewModel.posts.value.isNullOrEmpty()) empty_concept_illustration_l.visibility = View.VISIBLE
+            else empty_concept_illustration_l.visibility = View.INVISIBLE
+
             posts_list_recyclerview.adapter = PostsListAdapter(postList) {
                 findNavController().navigate(PostsListingFragmentDirections.navActionOpenDetail(it))
             }
 
             posts_list_recyclerview.layoutManager = LinearLayoutManager(context)
-        })
+    })
+
     }
 }
 
