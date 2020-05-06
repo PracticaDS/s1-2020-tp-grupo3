@@ -10,6 +10,7 @@ import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import io.reactivex.Flowable
 import java.io.OutputStreamWriter
+import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 
@@ -55,7 +56,7 @@ class PostCreateViewModel @Inject constructor(
         }.compose(RxSchedulers.flowableAsync()).subscribe {
             post = it.toInt()
             state.value = State.SUCCESS
-            trackEvents.logEvent("createPost")
+            trackEvents.logEvent("post-create")
         }
 
     }
