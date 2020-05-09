@@ -9,6 +9,7 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import io.reactivex.Flowable
+import timber.log.Timber
 import java.io.OutputStreamWriter
 import java.lang.Exception
 import java.util.*
@@ -36,7 +37,9 @@ class PostCreateViewModel @Inject constructor(
     fun createPost() {
         // TODO: extract this to some BlogEntryService or BlogEntryActions or some other super meaningful name...
         val disposable = Flowable.fromCallable {
-
+            if(titleText.value.toString().isBlank()){
+                throw IllegalArgumentException("title is blank")
+            }
             val fileName = UUID.randomUUID().toString() + ".body"
             val outputStreamWriter =
                 OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
@@ -53,11 +56,13 @@ class PostCreateViewModel @Inject constructor(
                 )
             )
 
-        }.compose(RxSchedulers.flowableAsync()).subscribe {
+        }.compose(RxSchedulers.flowableAsync()).subscribe ({
             post = it.toInt()
             state.value = State.SUCCESS
             trackEvents.logEvent("post-create")
-        }
+        },{t -> Timber.e(t)
+            state.value = State.ERROR
+        })
 
     }
 

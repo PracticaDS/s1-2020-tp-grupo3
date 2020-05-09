@@ -15,6 +15,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.junit.Rule
@@ -85,6 +86,7 @@ class PostsListingTest {
     }
 
 
+
     @Test
     fun whenThereArePosts_PostsListingHasAnInvisibleBackground(){
         postCreation()
@@ -96,18 +98,8 @@ class PostsListingTest {
 
 }
 
-fun withTintColor(expectedColor: Int): Matcher<View?>? {
-    return object : BoundedMatcher<View?, View>(View::class.java) {
 
-        override fun describeTo(description: Description) {
-            description.appendText("Checking the matcher on received view: ")
-            description.appendText("with expectedStatus=$expectedColor")
-        }
 
-        override fun matchesSafely(view: View): Boolean {
-            return view.backgroundTintList?.defaultColor == expectedColor
-        }
-    }
 
     @Test
     fun whenTappingOnNewPost_ShouldCreatePostAndShouldAppearInList() {

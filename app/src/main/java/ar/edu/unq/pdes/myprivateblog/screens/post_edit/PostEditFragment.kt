@@ -1,24 +1,25 @@
 package ar.edu.unq.pdes.myprivateblog.screens.post_edit
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
-import androidx.lifecycle.Observer
+import ar.edu.unq.pdes.myprivateblog.setAztec
 import kotlinx.android.synthetic.main.fragment_post_edit.*
-import org.wordpress.aztec.Aztec
-import org.wordpress.aztec.ITextFormat
-import org.wordpress.aztec.glideloader.GlideImageLoader
-import org.wordpress.aztec.glideloader.GlideVideoThumbnailLoader
-import org.wordpress.aztec.toolbar.IAztecToolbarClickListener
 import timber.log.Timber
-import java.io.File
+
 
 class PostEditFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_edit
@@ -38,25 +39,29 @@ class PostEditFragment : BaseFragment() {
             }
         })
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
-
-                PostEditViewModel.State.ERROR -> {
-                    // TODO: manage error states
-                }
-
-                PostEditViewModel.State.SUCCESS -> {
-                    findNavController().navigate(
-                        PostEditFragmentDirections.navActionUpdatePost(
-                            viewModel.post.value!!.uid
-                        )
-                    )
-                }
-
-                else -> { /* Do nothing, should not happen*/
-                }
+        viewModel.bodyHtml.observe(viewLifecycleOwner, Observer {
+            if (it != null){
+                body.fromHtml(it)
             }
         })
+
+
+
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                renderError(it)
+            }
+            else{
+                viewModel.post.value?.let {post -> PostEditFragmentDirections.navActionUpdatePost(post.uid) }?.let {
+                        id ->
+                                findNavController().navigate(
+                                    id
+                                )
+                }
+            }
+
+        })
+
 
         btn_close.setOnClickListener {
             closeAndGoBack()
@@ -65,19 +70,35 @@ class PostEditFragment : BaseFragment() {
 
 
         viewModel.cardColor.observe(viewLifecycleOwner, Observer {
-            header_background.setBackgroundColor(it)
-            val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(it)
-            title.setTextColor(itemsColor)
-            title.setHintTextColor(itemsColor)
-            btn_save.setColorFilter(itemsColor)
-            btn_close.setColorFilter(itemsColor)
-
-            applyStatusBarStyle(it)
+            renderHeaderColor(it)
         })
 
-        title.doOnTextChanged { text, start, count, after ->
-            viewModel.titleText.postValue(text.toString())
-        }
+        title.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {}
+
+            @SuppressLint("ResourceType")
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+
+                if(title.text.isNullOrEmpty() ){
+                    btn_save.isEnabled = false
+                    btn_save.isClickable = false
+                    btn_save.setColorFilter(Color.RED)
+                    Toast.makeText(context,"Enter a title please",Toast.LENGTH_SHORT).show()
+                }else{
+                    btn_save.isEnabled = true
+                    btn_save.isClickable = true
+                    btn_save.setColorFilter(R.color.colorPrimaryDark)
+                    viewModel.titleText.postValue(title.text.toString())
+                }
+            }
+        })
 
         body.doOnTextChanged { text, start, count, after ->
             viewModel.bodyText.value = body.toFormattedHtml()
@@ -97,48 +118,40 @@ class PostEditFragment : BaseFragment() {
         }
 
         context?.apply {
-            Aztec.with(body, source, formatting_toolbar, object : IAztecToolbarClickListener {
-                override fun onToolbarCollapseButtonClicked() {
-                }
-
-                override fun onToolbarExpandButtonClicked() {
-                }
-
-                override fun onToolbarFormatButtonClicked(
-                    format: ITextFormat,
-                    isKeyboardShortcut: Boolean
-                ) {
-                }
-
-                override fun onToolbarHeadingButtonClicked() {
-                }
-
-                override fun onToolbarHtmlButtonClicked() {
-                }
-
-                override fun onToolbarListButtonClicked() {
-                }
-
-                override fun onToolbarMediaButtonClicked(): Boolean = false
-
-            })
-                .setImageGetter(GlideImageLoader(this))
-                .setVideoThumbnailGetter(GlideVideoThumbnailLoader(this))
+            this.setAztec(body, source, formatting_toolbar)
         }
 
     }
 
-    fun renderBlogEntry(post: BlogEntry) {
+    private fun renderBlogEntry(post: BlogEntry) {
         title.setText(post.title)
         header_background.setBackgroundColor(post.cardColor)
         applyStatusBarStyle(post.cardColor)
         title.setTextColor(ColorUtils.findTextColorGivenBackgroundColor(post.cardColor))
-        if (post.bodyPath != null && context != null) {
-            body.fromHtml(File(context?.filesDir, post.bodyPath).readText())
-        }
     }
 
     private fun closeAndGoBack() {
         findNavController().navigateUp()
+    }
+
+    private fun renderHeaderColor(color:Int){
+        header_background.setBackgroundColor(color)
+        val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(color)
+        title.setTextColor(itemsColor)
+        title.setHintTextColor(itemsColor)
+        btn_save.setColorFilter(itemsColor)
+        btn_close.setColorFilter(itemsColor)
+
+        applyStatusBarStyle(color)
+    }
+
+    private fun renderError(errorState: ErrorState){
+        title.isEnabled = true
+        body.isEnabled = true
+        showError(errorState.getErrorMessage())
+        if(errorState.getType() == ErrorState.ErrorType.VALIDATION){
+            title.error = resources.getString(R.string.post_without_title)
+            btn_save.isEnabled = false
+        }
     }
 }
