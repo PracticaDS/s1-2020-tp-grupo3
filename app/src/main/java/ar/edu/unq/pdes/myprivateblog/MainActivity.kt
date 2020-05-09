@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
@@ -21,7 +22,6 @@ class MainActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
 
         setContentView(R.layout.activity_main)

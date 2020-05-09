@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "279975414656",
+    "firebase_url": "https://myprivateblog-grupo3-2e175.firebaseio.com",
+    "project_id": "myprivateblog-grupo3-2e175",
+    "storage_bucket": "myprivateblog-grupo3-2e175.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279975414656:android:8becc35f4d322db5704f65",
+        "android_client_info": {
+          "package_name": "ar.edu.unq.pdes.myprivateblog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "279975414656-u1m8i49frd7db5fvb7ljh781pj2dfc5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwh-VjnFrvQRiF7BLG1z1cWGgZKQQs6eA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "279975414656-u1m8i49frd7db5fvb7ljh781pj2dfc5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

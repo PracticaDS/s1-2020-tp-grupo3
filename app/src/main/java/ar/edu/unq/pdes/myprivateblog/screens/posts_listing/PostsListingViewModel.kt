@@ -12,6 +12,7 @@ class PostsListingViewModel @Inject constructor(
 
     val posts: LiveData<List<BlogEntry>> by lazy {
         blogEntriesRepository.getAllBlogEntries()
+
     }
 
 
