@@ -155,7 +155,6 @@ workflows:
             # not just bash, e.g.:
             # ruby ./path/to/script.rb
         title: Check if apk is created and uploaded
-    - deploy-to-bitrise-io@1: {}
     - slack@3:
         inputs:
         - api_token: ''
