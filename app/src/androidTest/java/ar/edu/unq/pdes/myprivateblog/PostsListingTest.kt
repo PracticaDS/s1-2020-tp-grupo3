@@ -154,7 +154,7 @@ class PostsListingTest {
         onView(withId(R.id.title))
             .check(matches(withText("Nuevo test post")))
     }
-}
+
 //
 //fun withWebViewTextMatcher(expectedText: String): Matcher<View?>? {
 //    return object : BoundedMatcher<View?, WebView>(WebView::class.java) {
