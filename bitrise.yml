@@ -64,19 +64,6 @@ workflows:
         - project_location: "$PROJECT_LOCATION"
         - module: "$MODULE"
         - variant: "$VARIANT"
-    - script@1.1.5:
-        title: Gradle connected android test
-        inputs:
-        - content: |
-            #!/usr/bin/env bash
-            # fail if any commands fails
-            set -e
-            # debug log
-            set -x
-
-            # write your script here
-            echo "Hello World!"
-            ./gradlew "app:connectedAndroidTest"
     - android-build-for-ui-testing@0:
         inputs:
         - variant: debug
@@ -141,20 +128,7 @@ workflows:
         - inst_use_orchestrator: 'true'
         - environment_variables: clearPackageData=true
         - test_type: instrumentation
-    - script@1.1.5:
-        title: Gradle connected android test
-        inputs:
-        - content: |
-            #!/usr/bin/env bash
-            # fail if any commands fails
-            set -e
-            # debug log
-            set -x
-
-            # write your script here
-            echo "Hello World!"
-            ./gradlew "app:connectedAndroidTest"
-    - gradle-runner@1: {}
+    - android-build@0: {}
     - script@1:
         inputs:
         - content: |-
