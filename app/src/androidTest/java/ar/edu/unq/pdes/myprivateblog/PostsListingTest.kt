@@ -96,7 +96,6 @@ class PostsListingTest {
             .check(matches(withEffectiveVisibility(Visibility.INVISIBLE)))
     }
 
-}
 
 
 
