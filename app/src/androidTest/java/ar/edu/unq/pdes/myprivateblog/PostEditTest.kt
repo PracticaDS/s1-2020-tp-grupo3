@@ -15,11 +15,13 @@ import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withBackgroundColor
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeMatcher
 
 import org.junit.Rule
@@ -132,12 +134,9 @@ class PostEditTest {
             replaceText("")
         )
 
-        onView(withId(R.id.btn_save)).perform(click())
+        onView(withId(R.id.btn_save)).check(matches(not(isEnabled())))
 
-        onView(withId(R.id.title)).check(matches(hasErrorText("Debe tener algún título")))
 
-        onView(withText("Error al guardar el post")).inRoot(MatcherUtils.ToastMatcher())
-            .check(matches(isDisplayed()))
     }
 
 
