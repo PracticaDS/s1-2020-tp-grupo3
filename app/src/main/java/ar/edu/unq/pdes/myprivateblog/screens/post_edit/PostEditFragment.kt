@@ -16,6 +16,7 @@ import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
+import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.setAztec
 import kotlinx.android.synthetic.main.fragment_post_edit.*
 import timber.log.Timber
@@ -45,18 +46,16 @@ class PostEditFragment : BaseFragment() {
             }
         })
 
-
-
         viewModel.errors.observe(viewLifecycleOwner, Observer {
             if(it != null){
                 renderError(it)
             }
             else{
                 viewModel.post.value?.let {post -> PostEditFragmentDirections.navActionUpdatePost(post.uid) }?.let {
-                        id ->
-                                findNavController().navigate(
-                                    id
-                                )
+                    id ->
+                        findNavController().navigate(
+                            id
+                        )
                 }
             }
 
