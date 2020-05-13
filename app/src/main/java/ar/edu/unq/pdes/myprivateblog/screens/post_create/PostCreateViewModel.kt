@@ -10,6 +10,9 @@ import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import ar.edu.unq.pdes.myprivateblog.services.PostService
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
 import timber.log.Timber
 import java.io.OutputStreamWriter
@@ -29,6 +32,8 @@ class PostCreateViewModel @Inject constructor(
     val titleText = MutableLiveData("")
     val bodyText = MutableLiveData("")
     val cardColor = MutableLiveData<Int>(Color.LTGRAY)
+    val db = FirebaseFirestore.getInstance()
+    val noteRef = db.document("testcollection/testdoc")
 
     var post = 0
 
@@ -44,7 +49,6 @@ class PostCreateViewModel @Inject constructor(
             errors.value = ErrorState.error(throwable)
             Timber.d(throwable)
         })
-
     }
 
 }
