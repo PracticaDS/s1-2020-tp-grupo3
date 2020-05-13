@@ -10,6 +10,9 @@ import androidx.navigation.fragment.findNavController
 import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
+import ar.edu.unq.pdes.myprivateblog.data.ErrorState
+import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditFragmentDirections
+import ar.edu.unq.pdes.myprivateblog.setAztec
 import kotlinx.android.synthetic.main.fragment_post_edit.*
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.ITextFormat
@@ -26,39 +29,25 @@ class PostCreateFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                renderError(it)
+            }
+            else{
+                if(viewModel.post != 0) {
+                    Timber.d("llego aca")
 
-                PostCreateViewModel.State.ERROR -> {
-                    title.error = "Debe tener algún título"
-                    val textMsg = "Error al guardar el post"
-                    val durationT = Toast.LENGTH_SHORT
-                    val toast = Toast.makeText(context!!.applicationContext,textMsg,durationT)
-                    toast.show()
-                }
-
-                PostCreateViewModel.State.SUCCESS -> {
                     findNavController().navigate(
-                        PostCreateFragmentDirections.navActionSaveNewPost(
-                            viewModel.post
-                        )
+                        PostCreateFragmentDirections.navActionSaveNewPost(viewModel.post)
                     )
                 }
-
-                else -> { /* Do nothing, should not happen*/
-                }
             }
+
+
         })
 
         viewModel.cardColor.observe(viewLifecycleOwner, Observer {
-            header_background.setBackgroundColor(it)
-            val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(it)
-            title.setTextColor(itemsColor)
-            title.setHintTextColor(itemsColor)
-            btn_save.setColorFilter(itemsColor)
-            btn_close.setColorFilter(itemsColor)
-
-            applyStatusBarStyle(it)
+            renderHeaderColor(it)
         })
 
         title.doOnTextChanged { text, start, count, after ->
@@ -83,36 +72,31 @@ class PostCreateFragment : BaseFragment() {
         }
 
         context?.apply {
-            Aztec.with(body, source, formatting_toolbar, object : IAztecToolbarClickListener {
-                override fun onToolbarCollapseButtonClicked() {
-                }
-
-                override fun onToolbarExpandButtonClicked() {
-                }
-
-                override fun onToolbarFormatButtonClicked(
-                    format: ITextFormat,
-                    isKeyboardShortcut: Boolean
-                ) {
-                }
-
-                override fun onToolbarHeadingButtonClicked() {
-                }
-
-                override fun onToolbarHtmlButtonClicked() {
-                }
-
-                override fun onToolbarListButtonClicked() {
-                }
-
-                override fun onToolbarMediaButtonClicked(): Boolean = false
-
-            })
-                .setImageGetter(GlideImageLoader(this))
-                .setVideoThumbnailGetter(GlideVideoThumbnailLoader(this))
+            this.setAztec(body, source, formatting_toolbar)
         }
 
 
+    }
+
+    private fun renderError(errorState: ErrorState){
+        title.isEnabled = true
+        body.isEnabled = true
+        showError(errorState.getErrorMessage())
+        if(errorState.getType() == ErrorState.ErrorType.VALIDATION){
+            title.error = resources.getString(R.string.post_without_title)
+            btn_save.isEnabled = false
+        }
+    }
+
+    private fun renderHeaderColor(color:Int){
+        header_background.setBackgroundColor(color)
+        val itemsColor = ColorUtils.findTextColorGivenBackgroundColor(color)
+        title.setTextColor(itemsColor)
+        title.setHintTextColor(itemsColor)
+        btn_save.setColorFilter(itemsColor)
+        btn_close.setColorFilter(itemsColor)
+
+        applyStatusBarStyle(color)
     }
 
     private fun closeAndGoBack() {

@@ -16,7 +16,12 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import kotlinx.android.synthetic.main.fragment_post_detail.*
 import java.io.File
 import android.widget.Toast
+import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.utils.longToast
+import kotlinx.android.synthetic.main.fragment_post_detail.body
+import kotlinx.android.synthetic.main.fragment_post_detail.header_background
+import kotlinx.android.synthetic.main.fragment_post_detail.title
+import kotlinx.android.synthetic.main.fragment_post_edit.*
 
 class PostDetailFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_post_detail
@@ -36,18 +41,17 @@ class PostDetailFragment : BaseFragment() {
                 renderBlogEntry(it)
             }
         })
+        viewModel.errors.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                renderError(it)
 
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
-            viewModel.errorMessage.value?.let{
-                context?.longToast(getString(it.title))
             }
-        })
-
-        viewModel.succesMessage.observe(viewLifecycleOwner, Observer {
-            viewModel.succesMessage.value?.let{
-                context?.longToast(getString(it.title))
+            else{
+                context?.longToast(getString(R.string.succes_msg_post_was_removed))
                 findNavController().navigateUp()
             }
+
+
         })
 
         btn_back.setOnClickListener {
@@ -75,8 +79,11 @@ class PostDetailFragment : BaseFragment() {
         body.settings.cacheMode = WebSettings.LOAD_DEFAULT
         body.webViewClient = WebViewClient()
         if (post.bodyPath != null && context != null) {
-            val content = File(context?.filesDir, post.bodyPath).readText()
-            body.loadData(content, "text/html", "UTF-8")
+            body.loadData(viewModel.bodyHtml.value, "text/html", "UTF-8")
         }
+    }
+
+    private fun renderError(errorState: ErrorState){
+        showError(errorState.getErrorMessage())
     }
 }
