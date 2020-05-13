@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "279975414656-oa3hp3mnh9duebor3d1ndl0eppbuqu8j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ar.edu.unq.pdes.myprivateblog",
+            "certificate_hash": "dd190c4b2706447db430bf9bdd7a3892b1b242f2"
+          }
+        },
+        {
           "client_id": "279975414656-u1m8i49frd7db5fvb7ljh781pj2dfc5l.apps.googleusercontent.com",
           "client_type": 3
         }
