@@ -2,12 +2,15 @@ package ar.edu.unq.pdes.myprivateblog.services
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import timber.log.Timber
 import java.io.OutputStreamWriter
 import java.util.*
 import javax.inject.Inject
@@ -16,12 +19,15 @@ class PostService @Inject constructor(
     val blogEntriesRepository: BlogEntriesRepository,
     val context: Context){
 
+    val db = FirebaseFirestore.getInstance()
+    val noteRef = db.document("testcollection/testdoc")
+
     fun fetchPost(id: EntityID) : Flowable<BlogEntry>{
         return blogEntriesRepository.fetchById(id).compose(RxSchedulers.flowableAsync())
     }
 
     fun updatePost(id: EntityID, cardColor : Int, body: String, title : String) : Completable{
-        return convertBody(body).flatMapCompletable {
+        val result = convertBody(body).flatMapCompletable {
             blogEntriesRepository.updateBlogEntry(
                 BlogEntry(
                     uid = id,
@@ -32,6 +38,14 @@ class PostService @Inject constructor(
             )
 
         }.compose(RxSchedulers.completableAsync())
+
+        noteRef.update(
+            "title", title,
+            "bodyPath", body,
+            "uid", id,
+            "cardColor", cardColor
+        )
+        return result
     }
 
     private fun convertBody(body : String) : Flowable<String>{

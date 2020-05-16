@@ -13,6 +13,7 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.services.PostService
 import ar.edu.unq.pdes.myprivateblog.utils.SimpleErrorMessage
 import ar.edu.unq.pdes.myprivateblog.utils.SimpleSuccesMessage
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
 import kotlinx.android.synthetic.main.fragment_post_detail.*
 import timber.log.Timber
@@ -32,6 +33,8 @@ class PostDetailViewModel @Inject constructor(
     val errors = MutableLiveData<ErrorState?>()
     var errorMessage = MutableLiveData<SimpleErrorMessage?>()
     var succesMessage = MutableLiveData<SimpleSuccesMessage?>()
+    val db = FirebaseFirestore.getInstance()
+    val noteRef = db.document("testcollection/testdoc")
 
     fun fetchBlogEntry(id: EntityID) {
             val disp = postService.fetchPost(id).map {
