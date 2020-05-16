@@ -16,15 +16,26 @@ import ar.edu.unq.pdes.myprivateblog.ColorUtils
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_posts_listing.*
 
 class PostsListingFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_posts_listing
+    private lateinit var auth: FirebaseAuth
 
     private val viewModel by viewModels<PostsListingViewModel> { viewModelFactory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+
+        //TODO: Mostrar info del usuario autenticado
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            val name = currentUser.displayName
+            val mail = currentUser.email
+            val photo = currentUser.photoUrl
+        }
 
         getMainActivity().hideKeyboard()
 

@@ -35,27 +35,24 @@ import timber.log.Timber
 class AuthenticateFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_signin
 
-    val RC_SIGN_IN: Int = 1
-    lateinit var mGoogleSignInClient: GoogleSignInClient
-    lateinit var mGoogleSignInOptions: GoogleSignInOptions
     lateinit var firebaseAuth: FirebaseAuth
 
     private val viewModel by viewModels<AuthenticateViewModel> { viewModelFactory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         firebaseAuth = FirebaseAuth.getInstance()
-
-        configureGoogleSignIn()
-        setupUI()
+        if(firebaseAuth.currentUser != null){
+            findNavController().navigate(
+                AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
+            )
+        }
+        else {
+            viewModel.configureGoogleSignIn()
+            setupUI()
+        }
     }
 
-    private fun configureGoogleSignIn() {
-        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        mGoogleSignInClient = GoogleSignIn.getClient(getMainActivity(), mGoogleSignInOptions)
-    }
+
 
     private fun setupUI() {
         google_button.setOnClickListener {
@@ -64,13 +61,13 @@ class AuthenticateFragment : BaseFragment() {
     }
 
     private fun signIn() {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        val signInIntent: Intent = viewModel.mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, viewModel.RC_SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == viewModel.RC_SIGN_IN) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -85,11 +82,12 @@ class AuthenticateFragment : BaseFragment() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-
+                viewModel.registerLogin()
                 findNavController().navigate(
                     AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
                 )
             } else {
+                viewModel.registerLoginFailed()
                 Toast.makeText(getMainActivity(), "Google sign in failed:(" + it.result.toString(), Toast.LENGTH_LONG)
                     .show()
             }
