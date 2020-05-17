@@ -42,17 +42,23 @@ class AuthenticateFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         firebaseAuth = FirebaseAuth.getInstance()
         if(firebaseAuth.currentUser != null){
-            findNavController().navigate(
-                AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
-            )
+            goToPostListing()
         }
         else {
             viewModel.configureGoogleSignIn()
             setupUI()
         }
+
+        without_auth.setOnClickListener {
+            goToPostListing()
+        }
     }
 
-
+    private fun goToPostListing(){
+        findNavController().navigate(
+            AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
+        )
+    }
 
     private fun setupUI() {
         google_button.setOnClickListener {
@@ -73,7 +79,9 @@ class AuthenticateFragment : BaseFragment() {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
-                Toast.makeText(getMainActivity(), "Google sign in failed:(" + e.message, Toast.LENGTH_LONG).show()
+                //TODO: revisar manejo de errores
+                Toast.makeText(getMainActivity(), "Google sign in failed", Toast.LENGTH_LONG).show()
+                Timber.d(e)
             }
         }
     }
@@ -87,9 +95,11 @@ class AuthenticateFragment : BaseFragment() {
                     AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
                 )
             } else {
+                //TODO: revisar manejo de errores
                 viewModel.registerLoginFailed()
-                Toast.makeText(getMainActivity(), "Google sign in failed:(" + it.result.toString(), Toast.LENGTH_LONG)
+                Toast.makeText(getMainActivity(), "Google sign in failed", Toast.LENGTH_LONG)
                     .show()
+                Timber.d(it.exception)
             }
         }
     }

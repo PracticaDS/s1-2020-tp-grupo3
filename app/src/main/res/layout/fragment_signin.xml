@@ -32,4 +32,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
+    <Button
+        android:id="@+id/without_auth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#F4F3F3"
+        android:elevation="1dp"
+        android:text="@string/continue_without_auth"
+        android:textColor="#706D6D"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/google_button"
+        app:strokeColor="#F1EBEB" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

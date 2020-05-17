@@ -5,4 +5,5 @@
     <string name="post_listing_background_description"> This background is only shown when there are no posts </string>
     <string name="error_msg_something_went_wrong_deleting">Something went wrong deleting</string>
     <string name="succes_msg_post_was_removed">Post was removed</string>
+    <string name="continue_without_auth">Continuar sin autenticar</string>
 </resources>
