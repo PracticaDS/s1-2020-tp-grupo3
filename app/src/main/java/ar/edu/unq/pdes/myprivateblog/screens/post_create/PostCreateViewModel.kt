@@ -33,7 +33,7 @@ class PostCreateViewModel @Inject constructor(
     val bodyText = MutableLiveData("")
     val cardColor = MutableLiveData<Int>(Color.LTGRAY)
     val db = FirebaseFirestore.getInstance()
-    val noteRef = db.document("testcollection/testdoc")
+    val collectionRef = db.collection("testcollection")
 
     var post = 0
 
@@ -49,6 +49,7 @@ class PostCreateViewModel @Inject constructor(
             errors.value = ErrorState.error(throwable)
             Timber.d(throwable)
         })
+
     }
 
 }
