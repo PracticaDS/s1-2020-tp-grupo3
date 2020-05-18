@@ -45,6 +45,7 @@ class PostEditTest {
 
     @Test
     fun whenTappingOnUpdatePost_postEditionScreenShouldOpen() {
+        onView(withId(R.id.without_auth)).perform(click())
 
         onView(withId(R.id.create_new_post))
             .perform(click())
@@ -73,6 +74,8 @@ class PostEditTest {
 
     @Test
     fun whenEditingPost_postFieldsInPostDetailsViewShouldHaveChanged() {
+        onView(withId(R.id.without_auth)).perform(click())
+
         onView(withId(R.id.create_new_post))
             .perform(click())
 
@@ -114,6 +117,7 @@ class PostEditTest {
 
     @Test
     fun whenEditingPostWithNoTitle_shouldShowAnError() {
+        onView(withId(R.id.without_auth)).perform(click())
 
         onView(withId(R.id.create_new_post))
             .perform(click())
@@ -143,6 +147,7 @@ class PostEditTest {
 }
 
 fun postCreation(){
+    onView(withId(R.id.without_auth)).perform(click())
     onView(withId(R.id.create_new_post))
         .perform(click())
 

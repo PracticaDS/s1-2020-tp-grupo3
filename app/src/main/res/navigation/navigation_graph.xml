@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/postsListingFragment">
+    app:startDestination="@id/authenticateFragment">
 
     <fragment
         android:id="@+id/postsListingFragment"
@@ -61,6 +61,14 @@
             app:popUpTo="@id/postCreateFragment"
             app:popUpToInclusive="true"
             app:destination="@id/postDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/authenticateFragment"
+        android:name="ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateFragment"
+        android:label="AuthenticateFragment" >
+        <action
+            android:id="@+id/action_authenticateFragment_to_postsListingFragment"
+            app:destination="@id/postsListingFragment" />
     </fragment>
 
 </navigation>
