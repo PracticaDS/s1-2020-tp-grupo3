@@ -34,7 +34,7 @@ class PostDetailViewModel @Inject constructor(
     var errorMessage = MutableLiveData<SimpleErrorMessage?>()
     var succesMessage = MutableLiveData<SimpleSuccesMessage?>()
     val db = FirebaseFirestore.getInstance()
-    val noteRef = db.document("testcollection/testdoc")
+    val collectionRef = db.collection("testcollection")
 
     fun fetchBlogEntry(id: EntityID) {
             val disp = postService.fetchPost(id).map {
@@ -49,10 +49,32 @@ class PostDetailViewModel @Inject constructor(
     }
 
     fun deletePost(){
+<<<<<<< 233e3f5795f36c98e5260a9d6d1d653a8abf1056
         val disposable = postService.deletePost(post.value!!.uid).subscribe({
             errors.value = null
         },{throwable -> errors.value = ErrorState.error(throwable)
         })
+=======
+        val disposable = Flowable.fromCallable {
+            val fileName = UUID.randomUUID().toString() + ".body"
+            val outputStreamWriter =
+                OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+            outputStreamWriter.use { it.write(post.value!!.uid) }
+            fileName
+        }.flatMapCompletable  {
+            blogEntriesRepository.deleteBlogEntry(
+                BlogEntry(uid = post.value!!.uid))
+        }.compose(RxSchedulers.completableAsync()).subscribe({
+            succesMessage.postValue(SimpleSuccesMessage(R.string.succes_msg_post_was_removed))
+        },{throwable ->
+            errorMessage.value = SimpleErrorMessage(R.string.error_msg_something_went_wrong_deleting)
+            Timber.e(throwable)})
+        collectionRef.document(post.value!!.uid.toString()).delete()
+            .addOnSuccessListener {
+            }
+            .addOnFailureListener {
+            }
+>>>>>>> refactor: cambio de strings de prueba en creacion edicion y eliminar post a usar el uid del post
     }
 
 }
