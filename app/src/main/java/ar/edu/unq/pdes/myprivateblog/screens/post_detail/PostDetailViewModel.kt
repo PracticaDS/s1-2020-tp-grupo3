@@ -32,7 +32,7 @@ class PostDetailViewModel @Inject constructor(
     var errorMessage = MutableLiveData<SimpleErrorMessage?>()
     var succesMessage = MutableLiveData<SimpleSuccesMessage?>()
     val db = FirebaseFirestore.getInstance()
-    val noteRef = db.document("testcollection/testdoc")
+    val collectionRef = db.collection("testcollection")
 
     fun fetchBlogEntry(id: EntityID) {
         val disposable = blogEntriesRepository
@@ -59,7 +59,7 @@ class PostDetailViewModel @Inject constructor(
         },{throwable ->
             errorMessage.value = SimpleErrorMessage(R.string.error_msg_something_went_wrong_deleting)
             Timber.e(throwable)})
-        noteRef.delete()
+        collectionRef.document(post.value!!.uid.toString()).delete()
             .addOnSuccessListener {
             }
             .addOnFailureListener {

@@ -20,7 +20,7 @@ class PostService @Inject constructor(
     val context: Context){
 
     val db = FirebaseFirestore.getInstance()
-    val noteRef = db.document("testcollection/testdoc")
+    val collectionRef = db.collection("testcollection")
 
     fun fetchPost(id: EntityID) : Flowable<BlogEntry>{
         return blogEntriesRepository.fetchById(id).compose(RxSchedulers.flowableAsync())
@@ -39,7 +39,7 @@ class PostService @Inject constructor(
 
         }.compose(RxSchedulers.completableAsync())
 
-        noteRef.update(
+        collectionRef.document(id.toString()).update(
             "title", title,
             "bodyPath", body,
             "uid", id,

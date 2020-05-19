@@ -64,15 +64,15 @@ class PostCreateViewModel @Inject constructor(
             post = it.toInt()
             state.value = State.SUCCESS
             trackEvents.logEvent("post-create")
+            collectionRef.document(it.toString()).set(blogEntry)
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener {
+                }
         },{t -> Timber.e(t)
             state.value = State.ERROR
         })
 
-        collectionRef.document(blogEntry.uid.toString()).set(blogEntry)
-                    .addOnSuccessListener {
-                    }
-                    .addOnFailureListener {
-                    }
     }
 
 }
