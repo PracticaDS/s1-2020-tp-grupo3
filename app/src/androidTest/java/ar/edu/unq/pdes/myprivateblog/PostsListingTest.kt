@@ -2,7 +2,6 @@ package ar.edu.unq.pdes.myprivateblog
 
 import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.clearText
@@ -10,14 +9,11 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +26,22 @@ class PostsListingTest {
     @get:Rule
     var activityRule: ActivityScenarioRule<MainActivity> =
         ActivityScenarioRule(MainActivity::class.java)
+
+    @Test
+    fun toolbarIsVisibleWhenThereAreNoPosts() {
+        onView(withId(R.id.without_auth)).perform(click())
+
+        onView(withId(R.id.toolbar))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun toolbarIsVisibleWhenThereArePosts() {
+        postCreation()
+        goBack()
+        onView(withId(R.id.toolbar))
+            .check(matches(isDisplayed()))
+    }
 
     @Test
     fun whenTappingOnNewPostFab_postCreationScreenShouldOpen() {
@@ -90,8 +102,6 @@ class PostsListingTest {
             .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     }
 
-
-
     @Test
     fun whenThereArePosts_PostsListingHasAnInvisibleBackground(){
         postCreation()
@@ -100,10 +110,6 @@ class PostsListingTest {
         onView(withId(R.id.empty_concept_illustration_l))
             .check(matches(withEffectiveVisibility(Visibility.INVISIBLE)))
     }
-
-
-
-
 
     @Test
     fun whenTappingOnNewPost_ShouldCreatePostAndShouldAppearInList() {
