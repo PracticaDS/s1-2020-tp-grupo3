@@ -5,16 +5,16 @@
         <item
             android:id="@+id/nav_sync"
             android:icon="@drawable/ic_sync"
-            android:title="Sync"/>
+            android:title="@string/sync"/>
     </group>
 
 
-    <item android:title="Account Settings">
+    <item android:title="@string/accountSettings">
         <menu>
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Sign Out"/>
+                android:title="@string/signOut"/>
         </menu>
     </item>
 </menu>
