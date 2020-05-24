@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import ar.edu.unq.pdes.myprivateblog.BaseFragment
 import ar.edu.unq.pdes.myprivateblog.ColorUtils
@@ -41,13 +42,15 @@ class AuthenticateFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         firebaseAuth = FirebaseAuth.getInstance()
-        if(firebaseAuth.currentUser != null){
-            goToPostListing()
-        }
-        else {
-            viewModel.configureGoogleSignIn()
-            setupUI()
-        }
+        viewModel.authenticationState.observe(viewLifecycleOwner, Observer {authenticationState ->
+            if (authenticationState == AuthenticateViewModel.AuthenticationState.AUTHENTICATED) {
+                goToPostListing()
+            }
+            else{
+                viewModel.configureGoogleSignIn()
+                setupUI()
+            }
+        })
 
         without_auth.setOnClickListener {
             goToPostListing()
@@ -92,7 +95,7 @@ class AuthenticateFragment : BaseFragment() {
             if (it.isSuccessful) {
                 viewModel.registerLogin()
                 findNavController().navigate(
-                    AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
+                    R.id.postsListingFragment
                 )
             } else {
                 //TODO: revisar manejo de errores

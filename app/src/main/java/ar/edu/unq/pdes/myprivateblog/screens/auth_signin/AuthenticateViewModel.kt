@@ -4,11 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import ar.edu.unq.pdes.myprivateblog.R
-import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
-import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
-import ar.edu.unq.pdes.myprivateblog.data.ErrorState
-import ar.edu.unq.pdes.myprivateblog.data.EventTracker
+import ar.edu.unq.pdes.myprivateblog.data.*
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import ar.edu.unq.pdes.myprivateblog.services.PostService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -32,7 +30,13 @@ class AuthenticateViewModel @Inject constructor(
     val RC_SIGN_IN: Int = 1
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
-
+    val authenticationState = FirebaseUserLiveData().map { user ->
+        if (user != null) {
+            AuthenticationState.AUTHENTICATED
+        } else {
+            AuthenticationState.UNAUTHENTICATED
+        }
+    }
 
     fun configureGoogleSignIn() {
         mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -49,5 +53,7 @@ class AuthenticateViewModel @Inject constructor(
         trackEvents.logEvent("login-failed")
     }
 
-
+    enum class AuthenticationState {
+        AUTHENTICATED, UNAUTHENTICATED
+    }
 }
