@@ -8,5 +8,6 @@
     <string name="continue_without_auth">Continuar sin autenticar</string>
     <string name="sync">Sync</string>
     <string name="signOut">Sign out</string>
+    <string name="signIn">Sign In</string>
     <string name="accountSettings">Account Settings</string>
 </resources>

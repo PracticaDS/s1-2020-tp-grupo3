@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.BitmapFactory
 import android.media.Image
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -15,6 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -80,21 +82,47 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
 
+    private fun setupMenuUINotLogged(){
+        val headerView: View = navView.getHeaderView(0)
+        val navUserEmail = headerView.findViewById<View>(R.id.user_email) as TextView
+        navUserEmail.isVisible = false
+        val menuNav : Menu = navView.menu
+        val sync : MenuItem = menuNav.findItem(R.id.nav_sync)
+        sync.isVisible = false
+        val logout : MenuItem = menuNav.findItem(R.id.nav_logout)
+        logout.isVisible = false
+        val login : MenuItem = menuNav.findItem(R.id.nav_login)
+        login.isVisible = true
+    }
+
+    private fun setupMenuUILogged(currentUser : FirebaseUser){
+        val headerView: View = navView.getHeaderView(0)
+        val navUsername = headerView.findViewById<View>(R.id.user_name) as TextView
+        val navUserEmail = headerView.findViewById<View>(R.id.user_email) as TextView
+        navUserEmail.isVisible = true
+        navUsername.text = currentUser.displayName
+        navUserEmail.text = currentUser.email
+        val navUserPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
+        Picasso.get().load(currentUser.photoUrl).into(navUserPhoto)
+        val menuNav : Menu = navView.menu
+        val sync : MenuItem = menuNav.findItem(R.id.nav_sync)
+        sync.isVisible = true
+        val logout : MenuItem = menuNav.findItem(R.id.nav_logout)
+        logout.isVisible = true
+        val login : MenuItem = menuNav.findItem(R.id.nav_login)
+        login.isVisible = false
+    }
+
     fun updateUserInfoUI(currentUser : FirebaseUser?){
         if(currentUser != null){
-            val headerView: View = navView.getHeaderView(0)
+            setupMenuUILogged(currentUser)
             //Desbloqueo el navigation view
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            val navUsername = headerView.findViewById<View>(R.id.user_name) as TextView
-            val navUserEmail = headerView.findViewById<View>(R.id.user_email) as TextView
-            navUsername.text = currentUser.displayName
-            navUserEmail.text = currentUser.email
-            val navUserPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
-            Picasso.get().load(currentUser.photoUrl).into(navUserPhoto)
+//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         }
         else{
+            setupMenuUINotLogged()
             //Bloqueo el layout para no abrir el navigation view
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 
@@ -116,9 +144,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Sync clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
-                Toast.makeText(this, "Sign out clicked", Toast.LENGTH_SHORT).show()
                 auth.signOut()
+                Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show()
                 user.value = auth.currentUser
+                findNavController(R.id.nav_host_fragment).navigate(R.id.authenticateFragment)
+            }
+            R.id.nav_login -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.authenticateFragment)
             }
         }
