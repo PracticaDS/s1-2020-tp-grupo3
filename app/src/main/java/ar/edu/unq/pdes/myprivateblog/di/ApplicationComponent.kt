@@ -6,6 +6,8 @@ import ar.edu.unq.pdes.myprivateblog.BaseApplication
 import ar.edu.unq.pdes.myprivateblog.MainActivity
 import ar.edu.unq.pdes.myprivateblog.MainActivityViewModel
 import ar.edu.unq.pdes.myprivateblog.data.*
+import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateFragment
+import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_detail.PostDetailFragment
@@ -69,7 +71,8 @@ open class GoogleAnalytics {
         PostsListingModule::class,
         PostDetailModule::class,
         PostEditModule::class,
-        PostCreateModule::class
+        PostCreateModule::class,
+        AuthenticateModule::class
     ]
 )
 abstract class MainActivityModule {
@@ -145,4 +148,20 @@ abstract class PostCreateModule {
     @IntoMap
     @ViewModelKey(PostCreateViewModel::class)
     abstract fun bindViewModel(viewmodel: PostCreateViewModel): ViewModel
+}
+
+@Module
+abstract class AuthenticateModule {
+
+    @ContributesAndroidInjector(
+        modules = [
+            ViewModelBuilder::class
+        ]
+    )
+    internal abstract fun authenticateFragment(): AuthenticateFragment
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthenticateViewModel::class)
+    abstract fun bindViewModel(viewmodel: AuthenticateViewModel): ViewModel
 }

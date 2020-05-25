@@ -59,6 +59,12 @@ class PostService @Inject constructor(
         }
     }
 
+    fun deletePost(id: EntityID) : Completable{
+        return blogEntriesRepository.deleteBlogEntry(
+                BlogEntry(uid = id)).compose(RxSchedulers.completableAsync())
+
+    }
+
     fun createPost(cardColor : Int, body: String, title : String) : Flowable<Long>{
         return convertBody(body).flatMapSingle {
             blogEntriesRepository.createBlogEntry(

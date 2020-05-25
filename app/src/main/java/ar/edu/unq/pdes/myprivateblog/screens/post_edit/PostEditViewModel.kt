@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
+import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.services.PostService
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.File
@@ -49,34 +50,5 @@ class PostEditViewModel @Inject constructor(
             },{throwable -> errors.value = ErrorState.error(throwable)
             })
 
-    }
-}
-
-data class ErrorState private constructor(
-    private val type: ErrorType? = ErrorType.SYSTEM,
-    private val errorMessage: String? = "error",
-    private val throwable: Throwable? = null
-) {
-    companion object {
-        fun error(error: Throwable) = ErrorState(throwable = error,errorMessage = error.message, type = ErrorType.SYSTEM)
-        fun validationError() = ErrorState(type = ErrorType.VALIDATION)
-    }
-
-    enum class ErrorType {
-        SYSTEM, VALIDATION
-    }
-
-    fun getErrorMessage() : String {
-        if (errorMessage != null) {
-            return errorMessage
-        }
-        throw IllegalStateException("errorMessage shouldn't be null")
-    }
-
-    fun getType() : ErrorType {
-        if (type != null) {
-            return type
-        }
-        throw IllegalStateException("type shouldn't be null")
     }
 }

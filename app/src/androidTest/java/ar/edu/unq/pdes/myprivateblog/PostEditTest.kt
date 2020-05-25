@@ -2,9 +2,7 @@ package ar.edu.unq.pdes.myprivateblog
 
 import android.graphics.Color
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.espresso.web.assertion.WebViewAssertions.webMatches
@@ -15,19 +13,14 @@ import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withBackgroundColor
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
-import org.hamcrest.TypeSafeMatcher
 
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
 
 
 @RunWith(AndroidJUnit4::class)
@@ -45,6 +38,7 @@ class PostEditTest {
 
     @Test
     fun whenTappingOnUpdatePost_postEditionScreenShouldOpen() {
+        onView(withId(R.id.without_auth)).perform(click())
 
         onView(withId(R.id.create_new_post))
             .perform(click())
@@ -65,14 +59,12 @@ class PostEditTest {
 
         val colorPicked = Color.LTGRAY;
         onView(withId(R.id.header_background)).check(matches(withBackgroundColor(colorPicked)))
-
-
     }
-
-
 
     @Test
     fun whenEditingPost_postFieldsInPostDetailsViewShouldHaveChanged() {
+        onView(withId(R.id.without_auth)).perform(click())
+
         onView(withId(R.id.create_new_post))
             .perform(click())
 
@@ -114,6 +106,7 @@ class PostEditTest {
 
     @Test
     fun whenEditingPostWithNoTitle_shouldShowAnError() {
+        onView(withId(R.id.without_auth)).perform(click())
 
         onView(withId(R.id.create_new_post))
             .perform(click())
@@ -135,34 +128,5 @@ class PostEditTest {
         )
 
         onView(withId(R.id.btn_save)).check(matches(not(isEnabled())))
-
-
     }
-
-
-}
-
-fun postCreation(){
-    onView(withId(R.id.create_new_post))
-        .perform(click())
-
-    val postTitle = "post1"
-
-    onView(withId(R.id.title))
-        .perform(typeText(postTitle))
-
-    val bodyText = "This is the body"
-    onView(withId(R.id.body))
-        .perform(typeText(bodyText))
-
-    val pickedColor = Color.parseColor("#b39ddb")
-
-    onView(withTintColor(pickedColor))
-        .perform(click())
-
-    onView(withId(R.id.btn_save))
-        .perform(click())
-
-    onView(withId(R.id.title))
-        .check(matches(withText(postTitle)))
 }
