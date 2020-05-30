@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
@@ -29,6 +30,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
+import dagger.android.AndroidInjection
 import io.reactivex.annotations.NonNull
 import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
@@ -48,15 +50,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
     private lateinit var auth: FirebaseAuth
     val user = MutableLiveData<FirebaseUser?>()
-    val authenticationState = FirebaseUserLiveData().map { user ->
-        if (user != null) {
-            AuthenticationState.AUTHENTICATED
-        } else {
-            AuthenticationState.UNAUTHENTICATED
-        }
-    }
+    lateinit var authenticationState : LiveData<AuthenticationState>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
+
+        authenticationState = viewModel.authenticated.map { user ->
+            if (user != null) {
+                AuthenticationState.AUTHENTICATED
+            } else {
+                AuthenticationState.UNAUTHENTICATED
+            }
+        }
+        viewModel.authService.addAuthStateListener(viewModel.authStateListener)
+
         auth = FirebaseAuth.getInstance()
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
 
@@ -82,47 +89,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onSupportNavigateUp() = findNavController(R.id.nav_host_fragment).navigateUp()
 
-    private fun setupMenuUINotLogged(){
-        val headerView: View = navView.getHeaderView(0)
-        val navUserEmail = headerView.findViewById<View>(R.id.user_email) as TextView
-        navUserEmail.isVisible = false
-        val menuNav : Menu = navView.menu
-        val sync : MenuItem = menuNav.findItem(R.id.nav_sync)
-        sync.isVisible = false
-        val logout : MenuItem = menuNav.findItem(R.id.nav_logout)
-        logout.isVisible = false
-        val login : MenuItem = menuNav.findItem(R.id.nav_login)
-        login.isVisible = true
-    }
-
-    private fun setupMenuUILogged(currentUser : FirebaseUser){
+    fun updateUserInfoUI(currentUser : FirebaseUser?){
         val headerView: View = navView.getHeaderView(0)
         val navUsername = headerView.findViewById<View>(R.id.user_name) as TextView
         val navUserEmail = headerView.findViewById<View>(R.id.user_email) as TextView
-        navUserEmail.isVisible = true
-        navUsername.text = currentUser.displayName
-        navUserEmail.text = currentUser.email
         val navUserPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
-        Picasso.get().load(currentUser.photoUrl).into(navUserPhoto)
         val menuNav : Menu = navView.menu
         val sync : MenuItem = menuNav.findItem(R.id.nav_sync)
-        sync.isVisible = true
+        sync.isVisible = currentUser != null
         val logout : MenuItem = menuNav.findItem(R.id.nav_logout)
-        logout.isVisible = true
+        logout.isVisible = currentUser != null
         val login : MenuItem = menuNav.findItem(R.id.nav_login)
-        login.isVisible = false
-    }
-
-    fun updateUserInfoUI(currentUser : FirebaseUser?){
+        login.isVisible = currentUser == null
+        navUserEmail.isVisible = currentUser != null
         if(currentUser != null){
-            setupMenuUILogged(currentUser)
-            //Desbloqueo el navigation view
-//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            navUsername.text = currentUser.displayName
+            navUserEmail.text = currentUser.email
+            Picasso.get().load(currentUser.photoUrl).into(navUserPhoto)
         }
         else{
-            setupMenuUINotLogged()
-            //Bloqueo el layout para no abrir el navigation view
-            //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            navUsername.text = getText(R.string.no_auth_user)
         }
     }
 
@@ -144,8 +130,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Sync clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
-                auth.signOut()
-                Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show()
+                viewModel.signOut()
+                Toast.makeText(this, getText(R.string.signedOut), Toast.LENGTH_SHORT).show()
                 user.value = auth.currentUser
                 findNavController(R.id.nav_host_fragment).navigate(R.id.authenticateFragment)
             }
