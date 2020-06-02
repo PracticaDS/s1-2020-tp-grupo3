@@ -7,6 +7,7 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -20,7 +21,6 @@ class PostService @Inject constructor(
     val context: Context){
 
     val db = FirebaseFirestore.getInstance()
-    val collectionRef = db.collection("testcollection")
 
     fun fetchPost(id: EntityID) : Flowable<BlogEntry>{
         return blogEntriesRepository.fetchById(id).compose(RxSchedulers.flowableAsync())
@@ -39,12 +39,17 @@ class PostService @Inject constructor(
 
         }.compose(RxSchedulers.completableAsync())
 
-        collectionRef.document(id.toString()).update(
-            "title", title,
-            "bodyPath", body,
-            "uid", id,
-            "cardColor", cardColor
-        )
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser != null && currentUser.email != null){
+            db.collection(currentUser.email!!).document(id.toString()).update(
+                "title", title,
+                "bodyPath", body,
+                "uid", id,
+                "cardColor", cardColor
+            )
+        }
+
         return result
     }
 

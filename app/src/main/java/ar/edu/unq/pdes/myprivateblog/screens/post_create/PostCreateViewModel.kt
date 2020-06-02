@@ -10,8 +10,12 @@ import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import ar.edu.unq.pdes.myprivateblog.services.PostService
+<<<<<<< ca137a5fd6f8910071177a80668f8786b621505a
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
+=======
+import com.google.firebase.auth.FirebaseAuth
+>>>>>>> Comienzo sync con firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
 import timber.log.Timber
@@ -38,6 +42,16 @@ class PostCreateViewModel @Inject constructor(
     var post = 0
 
     fun createPost() {
+<<<<<<< ca137a5fd6f8910071177a80668f8786b621505a
+=======
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val blogEntry = BlogEntry(
+            title = titleText.value.toString(),
+            bodyPath = bodyText.value!!,
+            cardColor = cardColor.value!!
+        )
+>>>>>>> Comienzo sync con firebase
         val disposable = postService.createPost(cardColor.value!!,
             bodyText.value!!,
             titleText.value.toString()
@@ -45,6 +59,17 @@ class PostCreateViewModel @Inject constructor(
                 post = it.toInt()
                 trackEvents.logEvent("post-create")
                 errors.value = null
+<<<<<<< ca137a5fd6f8910071177a80668f8786b621505a
+=======
+                if(currentUser != null && currentUser.email != null){
+                    db.collection(currentUser.email!!).document(it.toString()).set(blogEntry)
+                        .addOnSuccessListener {
+                        }
+                        .addOnFailureListener {
+                        }
+                }
+
+>>>>>>> Comienzo sync con firebase
         },{throwable ->
             errors.value = ErrorState.error(throwable)
             Timber.d(throwable)
