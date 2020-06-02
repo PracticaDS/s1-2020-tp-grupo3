@@ -29,8 +29,6 @@ class PostsListingTest {
 
     @Test
     fun toolbarIsVisibleWhenThereAreNoPosts() {
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.toolbar))
             .check(matches(isDisplayed()))
     }
@@ -45,8 +43,6 @@ class PostsListingTest {
 
     @Test
     fun whenTappingOnNewPostFab_postCreationScreenShouldOpen() {
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.create_new_post))
             .perform(click())
 
@@ -57,8 +53,6 @@ class PostsListingTest {
 
     @Test
     fun whenCreatingPost_shouldNavigateToPostDetail() {
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.create_new_post))
             .perform(click())
 
@@ -93,8 +87,6 @@ class PostsListingTest {
 
     @Test
     fun whenThereAreNoPosts_PostsListingHasAVisibleBackground(){
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.posts_list_recyclerview))
             .check(CustomMatchers.hasItemCount(0))
 
@@ -113,8 +105,6 @@ class PostsListingTest {
 
     @Test
     fun whenTappingOnNewPost_ShouldCreatePostAndShouldAppearInList() {
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.create_new_post))
             .perform(click())
 
@@ -144,8 +134,6 @@ class PostsListingTest {
 
     @Test
     fun whenTappingOnNewPost_ShouldCreatePostAndShouldBeAbleToOpenIt() {
-        onView(withId(R.id.without_auth)).perform(click())
-
         onView(withId(R.id.create_new_post))
             .perform(click())
 

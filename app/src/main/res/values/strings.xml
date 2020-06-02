@@ -3,10 +3,14 @@
     <string name="hint_post_title">Título del post</string>
     <string name="post_without_title">El post debe tener un título</string>
     <string name="post_listing_background_description"> This background is only shown when there are no posts </string>
-    <string name="error_msg_something_went_wrong_deleting">Something went wrong deleting</string>
-    <string name="succes_msg_post_was_removed">Post was removed</string>
+    <string name="error_msg_something_went_wrong_deleting">Error al borrar el post</string>
+    <string name="succes_msg_post_was_removed">Post borrado</string>
     <string name="continue_without_auth">Continuar sin autenticar</string>
-    <string name="sync">Sync</string>
-    <string name="signOut">Sign out</string>
-    <string name="accountSettings">Account Settings</string>
+    <string name="sync">Sincronizar</string>
+    <string name="signOut">Salir</string>
+    <string name="signIn">Ingresar</string>
+    <string name="accountSettings">Cuenta</string>
+    <string name="no_auth_user">Usuario anónimo</string>
+    <string name="signedOut">Sesión cerrada</string>
+    <string name="auth_failed">Falló la autenticación</string>
 </resources>

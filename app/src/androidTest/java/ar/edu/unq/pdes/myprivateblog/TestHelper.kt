@@ -7,7 +7,6 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 
 fun postCreation(){
-    Espresso.onView(ViewMatchers.withId(R.id.without_auth)).perform(ViewActions.click())
     Espresso.onView(ViewMatchers.withId(R.id.create_new_post))
         .perform(ViewActions.click())
 

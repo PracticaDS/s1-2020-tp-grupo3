@@ -18,6 +18,7 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_posts_listing.*
+import kotlinx.android.synthetic.main.nav_header.*
 
 class PostsListingFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_posts_listing
@@ -35,6 +36,8 @@ class PostsListingFragment : BaseFragment() {
             val name = currentUser.displayName
             val mail = currentUser.email
             val photo = currentUser.photoUrl
+
+            //user_email.text = currentUser.email
         }
 
         getMainActivity().hideKeyboard()

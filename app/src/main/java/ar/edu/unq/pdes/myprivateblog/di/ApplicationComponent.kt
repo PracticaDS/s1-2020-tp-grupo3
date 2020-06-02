@@ -16,6 +16,8 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingFragment
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingViewModel
+import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
+import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.*
 import dagger.android.AndroidInjector
@@ -30,7 +32,8 @@ import javax.inject.Singleton
         AndroidSupportInjectionModule::class,
         ApplicationModule::class,
         MainActivityModule::class,
-        GoogleAnalytics::class
+        GoogleAnalytics::class,
+        AuthenticationModule::class
     ])
 interface ApplicationComponent : AndroidInjector<BaseApplication> {
 
@@ -164,4 +167,14 @@ abstract class AuthenticateModule {
     @IntoMap
     @ViewModelKey(AuthenticateViewModel::class)
     abstract fun bindViewModel(viewmodel: AuthenticateViewModel): ViewModel
+}
+
+@Module
+open class AuthenticationModule {
+
+    @Singleton
+    @Provides
+    open fun provideAuthService(context: Context): AuthenticationService {
+        return FirebaseAuthService(context)
+    }
 }
