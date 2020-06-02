@@ -13,6 +13,7 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.services.PostService
 import ar.edu.unq.pdes.myprivateblog.utils.SimpleErrorMessage
 import ar.edu.unq.pdes.myprivateblog.utils.SimpleSuccesMessage
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
 import kotlinx.android.synthetic.main.fragment_post_detail.*
@@ -34,7 +35,6 @@ class PostDetailViewModel @Inject constructor(
     var errorMessage = MutableLiveData<SimpleErrorMessage?>()
     var succesMessage = MutableLiveData<SimpleSuccesMessage?>()
     val db = FirebaseFirestore.getInstance()
-    val collectionRef = db.collection("testcollection")
 
     fun fetchBlogEntry(id: EntityID) {
             val disp = postService.fetchPost(id).map {
@@ -53,12 +53,17 @@ class PostDetailViewModel @Inject constructor(
             errors.value = null
         },{throwable -> errors.value = ErrorState.error(throwable)
         })
-        
-        collectionRef.document(post.value!!.uid.toString()).delete()
-            .addOnSuccessListener {
-            }
-            .addOnFailureListener {
-            }
+
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser != null && currentUser.email != null){
+            db.collection(currentUser.email!!).document(post.value!!.uid.toString()).delete()
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener {
+                }
+        }
+
     }
 
 }

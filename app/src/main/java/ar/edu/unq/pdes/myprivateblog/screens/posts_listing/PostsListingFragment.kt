@@ -56,6 +56,7 @@ class PostsListingFragment : BaseFragment() {
             posts_list_recyclerview.layoutManager = LinearLayoutManager(context)
     })
 
+        viewModel.syncWithFireBase()
     }
 }
 
