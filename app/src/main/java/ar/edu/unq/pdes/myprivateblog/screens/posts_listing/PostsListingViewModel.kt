@@ -16,21 +16,4 @@ class PostsListingViewModel @Inject constructor(
         blogEntriesRepository.getAllBlogEntries()
 
     }
-
-    fun syncWithFireBase(){
-        val auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser
-        if(currentUser != null && currentUser.email != null){
-            db.collection(currentUser.email!!).get()
-                .addOnSuccessListener { result ->
-                    for(document in result){
-                        val possiblePost = document.toObject(BlogEntry::class.java)
-                        if (!posts.value?.any { blogEntry -> blogEntry.uid == possiblePost.uid }!!){
-                            //add possible value pero es tendria que ser mutable live data
-                        }
-                    }
-                }
-                .addOnFailureListener {  }
-        }
-    }
 }
