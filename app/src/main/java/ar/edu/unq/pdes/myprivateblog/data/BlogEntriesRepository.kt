@@ -12,6 +12,9 @@ class BlogEntriesRepository(val appDatabase: AppDatabase) {
 
     fun fetchById(entryId: EntityID) = appDatabase.blogEntriesDao().loadById(entryId)
 
+    fun getBlogEntriesWith(deleted: Boolean? = null, synced: Boolean? = null) =
+        LiveDataReactiveStreams.fromPublisher(appDatabase.blogEntriesDao().getAll(deleted, synced))
+
     fun createBlogEntry(blogEntry: BlogEntry) = appDatabase.blogEntriesDao()
         .insert(blogEntry)
         .subscribeOn(Schedulers.io())

@@ -47,6 +47,9 @@ data class BlogEntry(
     @ColumnInfo(name = "is_deleted")
     val deleted: Boolean = false,
 
+    @ColumnInfo(name = "synced")
+    var synced: Boolean = false,
+
     @ColumnInfo(name = "date")
     val date: OffsetDateTime? = null,
 
@@ -59,6 +62,17 @@ data class BlogEntry(
 interface BlogEntriesDao {
     @Query("SELECT * FROM BlogEntries ORDER BY date DESC")
     fun getAll(): Flowable<List<BlogEntry>>
+
+    @Query("""
+        SELECT * FROM BlogEntries
+        WHERE (:deleted IS NULL OR is_deleted = :deleted)
+        AND (:synced IS NULL OR synced = :synced)
+        ORDER BY date DESC
+    """)
+    fun getAll(
+        deleted: Boolean? = null,
+        synced:  Boolean? = null
+    ): Flowable<List<BlogEntry>>
 
     @Query("SELECT * FROM BlogEntries WHERE uid = :entryId LIMIT 1")
     fun loadById(entryId: EntityID): Flowable<BlogEntry>
