@@ -18,8 +18,7 @@ class SynchronizeService @Inject constructor(
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if(currentUser != null && currentUser.email != null){
-            //iria metodo que se traiga posts con flags de borrado en false
-            blogEntriesRepository.getAllBlogEntries().observeForever { unsyncBlogs ->
+            blogEntriesRepository.getBlogEntriesWith(false).observeForever { unsyncBlogs ->
                 db.runBatch { batch ->
                     unsyncBlogs.forEach {
                         val dbReference = db.collection(currentUser.email!!).document(it.uid.toString())
@@ -27,9 +26,8 @@ class SynchronizeService @Inject constructor(
                     }
                 }.addOnSuccessListener {
                     unsyncBlogs.forEach {
-                        //si sync es val con copy y lo metemos en el set
-                        //it.sync = true
-                        //blogEntriesRepository.updateBlogEntry(it)
+                        it.synced = true
+                        blogEntriesRepository.updateBlogEntry(it)
                     }
                 }
             }
@@ -39,20 +37,17 @@ class SynchronizeService @Inject constructor(
                     val posts = blogEntriesRepository.getAllBlogEntries()
                     for(document in result){
                         val possiblePost = document.toObject(BlogEntry::class.java)
-                        if(!!posts.value?.any { blogEntry -> blogEntry.uid == possiblePost.uid }!!){
+                        if(posts.value?.all { blogEntry -> blogEntry.uid != possiblePost.uid }!!){
                             blogEntriesRepository.createBlogEntry(possiblePost)
                         }
                     }
                 }
 
-            //podriamos haer metodo que se traiga posts con flag borrado true
-            blogEntriesRepository.getAllBlogEntries().observeForever { deletedBlogs ->
+            blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
                 db.runBatch { batch ->
                     deletedBlogs.forEach {
                         val dbReference = db.collection(currentUser.email!!).document(it.uid.toString())
-                        if(it.deleted){
-                            batch.delete(dbReference)
-                        }
+                        batch.delete(dbReference)
                     }
                 }
             }

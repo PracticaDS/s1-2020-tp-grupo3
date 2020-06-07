@@ -31,8 +31,6 @@ class PostCreateViewModel @Inject constructor(
     val titleText = MutableLiveData("")
     val bodyText = MutableLiveData("")
     val cardColor = MutableLiveData<Int>(Color.LTGRAY)
-    val db = FirebaseFirestore.getInstance()
-    val collectionRef = db.collection("testcollection")
 
     var post = 0
 
@@ -51,14 +49,6 @@ class PostCreateViewModel @Inject constructor(
                 post = it.toInt()
                 trackEvents.logEvent("post-create")
                 errors.value = null
-                if(currentUser != null && currentUser.email != null){
-                    db.collection(currentUser.email!!).document(it.toString()).set(blogEntry)
-                        .addOnSuccessListener {
-                        }
-                        .addOnFailureListener {
-                        }
-                }
-
         },{throwable ->
             errors.value = ErrorState.error(throwable)
             Timber.d(throwable)

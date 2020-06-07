@@ -49,20 +49,10 @@ class PostDetailViewModel @Inject constructor(
     }
 
     fun deletePost(){
-        val disposable = postService.deletePost(post.value!!.uid).subscribe({
+        val disposable = postService.deletePost(post.value!!).subscribe({
             errors.value = null
         },{throwable -> errors.value = ErrorState.error(throwable)
         })
-
-        val auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser
-        if(currentUser != null && currentUser.email != null){
-            db.collection(currentUser.email!!).document(post.value!!.uid.toString()).delete()
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener {
-                }
-        }
 
     }
 
