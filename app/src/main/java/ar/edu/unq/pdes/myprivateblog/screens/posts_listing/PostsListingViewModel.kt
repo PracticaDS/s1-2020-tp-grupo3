@@ -13,7 +13,6 @@ class PostsListingViewModel @Inject constructor(
 ) : ViewModel() {
     val db = FirebaseFirestore.getInstance()
     val posts: LiveData<List<BlogEntry>> by lazy {
-        blogEntriesRepository.getAllBlogEntries()
-
+        blogEntriesRepository.getBlogEntriesWith(false)
     }
 }
