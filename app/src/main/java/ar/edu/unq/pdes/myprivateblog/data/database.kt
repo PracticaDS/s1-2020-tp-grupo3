@@ -45,7 +45,7 @@ data class BlogEntry(
     val imagePath: String? = null,
 
     @ColumnInfo(name = "is_deleted")
-    val deleted: Boolean = false,
+    var deleted: Boolean = false,
 
     @ColumnInfo(name = "is_synced")
     var synced: Boolean = false,
