@@ -47,7 +47,7 @@ data class BlogEntry(
     @ColumnInfo(name = "is_deleted")
     val deleted: Boolean = false,
 
-    @ColumnInfo(name = "synced")
+    @ColumnInfo(name = "is_synced")
     var synced: Boolean = false,
 
     @ColumnInfo(name = "date")
@@ -66,7 +66,7 @@ interface BlogEntriesDao {
     @Query("""
         SELECT * FROM BlogEntries
         WHERE (:deleted IS NULL OR is_deleted = :deleted)
-        AND (:synced IS NULL OR synced = :synced)
+        AND (:synced IS NULL OR is_synced = :synced)
         ORDER BY date DESC
     """)
     fun getAll(
