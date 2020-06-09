@@ -21,7 +21,7 @@ class SynchronizeService @Inject constructor(
             blogEntriesRepository.getBlogEntriesWith(false).observeForever { unsyncBlogs ->
                 db.runBatch { batch ->
                     unsyncBlogs.forEach {
-                        val dbReference = db.collection(currentUser.email!!).document(it.uid.toString())
+                        val dbReference = db.collection(currentUser.uid).document(it.uid.toString())
                         batch.set(dbReference, it, SetOptions.merge())
                     }
                 }.addOnSuccessListener {
@@ -32,7 +32,7 @@ class SynchronizeService @Inject constructor(
                 }
             }
 
-            db.collection(currentUser.email!!).whereEqualTo("deleted", false).get()
+            db.collection(currentUser.uid).whereEqualTo("deleted", false).get()
                 .addOnSuccessListener { result ->
                     val posts = blogEntriesRepository.getAllBlogEntries()
                     for(document in result){
@@ -46,7 +46,7 @@ class SynchronizeService @Inject constructor(
             blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
                 db.runBatch { batch ->
                     deletedBlogs.forEach {
-                        val dbReference = db.collection(currentUser.email!!).document(it.uid.toString())
+                        val dbReference = db.collection(currentUser.uid).document(it.uid.toString())
                         batch.delete(dbReference)
                     }
                 }
