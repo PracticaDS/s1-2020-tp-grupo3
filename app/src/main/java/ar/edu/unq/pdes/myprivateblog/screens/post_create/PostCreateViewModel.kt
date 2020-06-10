@@ -10,6 +10,7 @@ import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import ar.edu.unq.pdes.myprivateblog.services.PostService
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
 import timber.log.Timber
@@ -34,6 +35,13 @@ class PostCreateViewModel @Inject constructor(
     var post = 0
 
     fun createPost() {
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val blogEntry = BlogEntry(
+            title = titleText.value.toString(),
+            bodyPath = bodyText.value!!,
+            cardColor = cardColor.value!!
+        )
         val disposable = postService.createPost(cardColor.value!!,
             bodyText.value!!,
             titleText.value.toString()

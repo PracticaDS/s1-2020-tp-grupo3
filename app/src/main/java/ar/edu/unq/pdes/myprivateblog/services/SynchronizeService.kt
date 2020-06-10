@@ -22,6 +22,7 @@ class SynchronizeService @Inject constructor(
                 db.runBatch { batch ->
                     unsyncBlogs.forEach {
                         val dbReference = db.collection(currentUser.uid).document(it.uid.toString())
+
                         batch.set(dbReference, it, SetOptions.merge())
                     }
                 }.addOnSuccessListener {
