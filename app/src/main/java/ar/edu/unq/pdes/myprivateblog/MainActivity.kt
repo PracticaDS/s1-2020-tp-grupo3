@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_logout -> {
                 viewModel.signOut()
                 Toast.makeText(this, getText(R.string.signedOut), Toast.LENGTH_SHORT).show()
-                user.value = auth.currentUser
+                user.value = null
                 findNavController(R.id.nav_host_fragment).navigate(R.id.authenticateFragment)
             }
             R.id.nav_login -> {
