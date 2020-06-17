@@ -3,9 +3,11 @@ package ar.edu.unq.pdes.myprivateblog.services
 import android.content.Context
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
+import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions
+import timber.log.Timber
 import javax.inject.Inject
 
 class SynchronizeService @Inject constructor(
@@ -35,15 +37,13 @@ class SynchronizeService @Inject constructor(
 
             db.collection(currentUser.uid).whereEqualTo("deleted", false).get()
                 .addOnSuccessListener { result ->
-                    val posts = blogEntriesRepository.getAllBlogEntries()
+                    val blogsToInsert = mutableListOf<BlogEntry>()
                     for(document in result){
                         val possiblePost = document.toObject(BlogEntry::class.java)
-                        if(posts.value?.all { blogEntry -> blogEntry.uid != possiblePost.uid }!!){
-                            blogEntriesRepository.createBlogEntry(possiblePost)
-                        }
+                        blogsToInsert.add(possiblePost)
                     }
+                    blogEntriesRepository.insertAll(blogsToInsert).subscribe({Timber.d("TODO OK")},{throwable: Throwable? ->  Timber.d(throwable)})
                 }
-/*          //no estamos borrando nunca local
             blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
                 db.runBatch { batch ->
                     deletedBlogs.forEach {
@@ -51,7 +51,7 @@ class SynchronizeService @Inject constructor(
                         batch.delete(dbReference)
                     }
                 }
-            }*/
+            }
         }
     }
 }

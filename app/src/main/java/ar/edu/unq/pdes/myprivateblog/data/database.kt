@@ -90,7 +90,7 @@ interface BlogEntriesDao {
     @Query("SELECT * FROM BlogEntries WHERE uid = :entryId LIMIT 1")
     fun loadById(entryId: EntityID): Flowable<BlogEntry>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(entries: List<BlogEntry>): Completable
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

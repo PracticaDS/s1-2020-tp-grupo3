@@ -40,10 +40,10 @@ class PostDetailViewModel @Inject constructor(
             val disp = postService.fetchPost(id).map {
                 bodyHtml.value = File(context.filesDir, it.bodyPath).readText()
                 it
-            }.subscribe{
+            }.subscribe({
                 Timber.d("OBTENGO POST")
                 post.value = it
-            }
+            },{Timber.d(it)})
 
 
     }
