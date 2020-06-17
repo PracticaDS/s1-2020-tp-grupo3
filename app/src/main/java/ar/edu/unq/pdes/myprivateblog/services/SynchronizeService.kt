@@ -17,7 +17,7 @@ class SynchronizeService @Inject constructor(
     fun syncWithFireBase(){
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
-        if(currentUser != null && currentUser.email != null){
+        if(currentUser != null){
             blogEntriesRepository.getBlogEntriesWith(false).observeForever { unsyncBlogs ->
                 db.runBatch { batch ->
                     unsyncBlogs.forEach {
@@ -43,7 +43,7 @@ class SynchronizeService @Inject constructor(
                         }
                     }
                 }
-
+/*          //no estamos borrando nunca local
             blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
                 db.runBatch { batch ->
                     deletedBlogs.forEach {
@@ -51,7 +51,7 @@ class SynchronizeService @Inject constructor(
                         batch.delete(dbReference)
                     }
                 }
-            }
+            }*/
         }
     }
 }

@@ -90,10 +90,10 @@ interface BlogEntriesDao {
     @Query("SELECT * FROM BlogEntries WHERE uid = :entryId LIMIT 1")
     fun loadById(entryId: EntityID): Flowable<BlogEntry>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(entries: List<BlogEntry>): Completable
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entries: BlogEntry): Single<Long>
 
     @Update
@@ -105,6 +105,21 @@ interface BlogEntriesDao {
 
     @Delete
     fun delete(entry: BlogEntry): Completable
+
+    @Transaction
+    fun upsert(entry: BlogEntry) {
+        insert(entry)
+
+    }
+
+    @Transaction
+    fun upsertAll(entries: List<BlogEntry>) {
+        /*val updateList = insertAll(entries).andThen(getAll().)
+
+        if (updateList.isNotEmpty()) {
+            updateAll(updateList)
+        }*/
+    }
 }
 
 object ThreeTenTimeTypeConverters {
