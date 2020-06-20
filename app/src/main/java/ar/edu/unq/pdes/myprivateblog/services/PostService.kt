@@ -35,7 +35,7 @@ class PostService @Inject constructor(
         }.compose(RxSchedulers.completableAsync())
     }
 
-    private fun convertBody(body : String) : Flowable<String>{
+    fun convertBody(body : String) : Flowable<String>{
         return Flowable.fromCallable {
             val fileName = UUID.randomUUID().toString() + ".body"
             val outputStreamWriter =
