@@ -17,6 +17,7 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingFragment
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingViewModel
 import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
+import ar.edu.unq.pdes.myprivateblog.services.EncryptionService
 import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.*
@@ -33,7 +34,8 @@ import javax.inject.Singleton
         ApplicationModule::class,
         MainActivityModule::class,
         GoogleAnalytics::class,
-        AuthenticationModule::class
+        AuthenticationModule::class,
+        EncryptionModule::class
     ])
 interface ApplicationComponent : AndroidInjector<BaseApplication> {
 
@@ -176,5 +178,15 @@ open class AuthenticationModule {
     @Provides
     open fun provideAuthService(context: Context): AuthenticationService {
         return FirebaseAuthService(context)
+    }
+}
+
+@Module
+open class EncryptionModule {
+
+    @Singleton
+    @Provides
+    open fun provideEncryptionService(context: Context): EncryptionService {
+        return EncryptionService(context)
     }
 }
