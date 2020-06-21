@@ -1,19 +1,14 @@
 package ar.edu.unq.pdes.myprivateblog.services
 
 import android.content.Context
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.util.Base64
 import androidx.core.content.edit
 import ar.edu.unq.pdes.myprivateblog.R
 import java.io.InputStream
 import java.io.OutputStream
-import java.security.KeyStore
 import java.security.SecureRandom
-import java.security.spec.KeySpec
 import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
