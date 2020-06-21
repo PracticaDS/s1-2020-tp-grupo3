@@ -19,12 +19,9 @@ import javax.inject.Inject
 
 class EncryptionService @Inject constructor(val context: Context) {
 
-    private val keySpecAlgorithm: String = "AES"
-    private val keyFactoryAlgorithm = "PBKDF2WithHmacSHA1"
-    private val transformations: String = "AES/CBC/PKCS5Padding"
-    private val keySpecIterationCount = 65536
-    private val keySpecKeyLength = 256
-    private val cipher = Cipher.getInstance(transformations)
+    private val algorithm: String = "AES"
+    private val transformation: String = "AES/CBC/PKCS5PADDING"
+    private val cipher = Cipher.getInstance(transformation)
 
     fun encrypt(key: SecretKey, plainText: InputStream, outputStream: OutputStream) {
 
@@ -32,8 +29,7 @@ class EncryptionService @Inject constructor(val context: Context) {
         SecureRandom().nextBytes(salt)
 
         val data = key.encoded
-        val skeySpec = SecretKeySpec(data, 0, data.size, "AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+        val skeySpec = SecretKeySpec(data, 0, data.size, algorithm)
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec, IvParameterSpec(salt))
 
         val output = CipherOutputStream(outputStream,cipher)
@@ -56,7 +52,6 @@ class EncryptionService @Inject constructor(val context: Context) {
             it.read(salt,0,cipher.blockSize)
         }
 
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
         cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(salt))
 
         val cipherInput = CipherInputStream(encryptedInput,cipher)
@@ -66,21 +61,9 @@ class EncryptionService @Inject constructor(val context: Context) {
         }
     }
 
-    private fun getSecretKeySpec(password: String, salt: ByteArray): SecretKeySpec {
-        val spec: KeySpec = PBEKeySpec(
-            password.toCharArray(),
-            salt,
-            keySpecIterationCount,
-            keySpecKeyLength
-        )
-        val factory: SecretKeyFactory = SecretKeyFactory.getInstance(keyFactoryAlgorithm)
-        val secretKey: SecretKey = factory.generateSecret(spec)
-        return SecretKeySpec(secretKey.encoded, keySpecAlgorithm)
-    }
-
     fun generateSecretKey(): SecretKey? {
         val secureRandom = SecureRandom()
-        val keyGenerator = KeyGenerator.getInstance("AES")
+        val keyGenerator = KeyGenerator.getInstance(algorithm)
         keyGenerator?.init(256, secureRandom)
         return keyGenerator?.generateKey()
     }
@@ -89,7 +72,7 @@ class EncryptionService @Inject constructor(val context: Context) {
 
     private fun decodeSecretKey(key: String): SecretKey {
         val decodedKey = Base64.decode(key, Base64.NO_WRAP)
-        return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        return SecretKeySpec(decodedKey, 0, decodedKey.size, algorithm)
     }
 
     fun storeSecretKey(secretKey: SecretKey) {
