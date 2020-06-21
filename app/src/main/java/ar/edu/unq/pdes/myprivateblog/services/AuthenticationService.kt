@@ -28,7 +28,7 @@ class FirebaseAuthService @Inject constructor(context: Context) : Authentication
         .requestIdToken(context.getString(R.string.default_web_client_id))
         .requestEmail().build()
     private val googleClient = GoogleSignIn.getClient(context, googleConf)
-
+    private val encryptionService = EncryptionService(context)
     override fun currentUser() = firebaseAuth.currentUser
 
     override fun loggedIn() = currentUser() != null
@@ -46,6 +46,7 @@ class FirebaseAuthService @Inject constructor(context: Context) : Authentication
     ) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
+            checkOrCreateSecretKey()
             val token = task.getResult(ApiException::class.java)?.idToken ?: return
             val credential = GoogleAuthProvider.getCredential(token, null)
             FirebaseAuth.getInstance().signInWithCredential(credential)
@@ -67,6 +68,17 @@ class FirebaseAuthService @Inject constructor(context: Context) : Authentication
 
     override fun removeAuthStateListener(listener : FirebaseAuth.AuthStateListener) {
         firebaseAuth.removeAuthStateListener(listener)
+    }
+
+    private fun checkOrCreateSecretKey() {
+        val secretKey = encryptionService.retrieveSecretKey()
+        //TODO: guardar secret key en firebase si no existe
+        if (secretKey == null) {
+            val newSecretKey = encryptionService.generateSecretKey()!!
+            //TODO: Guardar secrey key en firebase
+        } else {
+            encryptionService.storeSecretKey(secretKey)
+        }
     }
 }
 
