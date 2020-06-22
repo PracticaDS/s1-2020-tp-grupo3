@@ -1,5 +1,6 @@
 package ar.edu.unq.pdes.myprivateblog
 
+import android.widget.ProgressBar
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
@@ -26,8 +27,8 @@ class MainActivityViewModel  @Inject constructor(
         authService.signOut()
     }
 
-    fun sync(){
-        syncServ.syncWithFireBase()
+    fun sync(spinner : ProgressBar){
+        syncServ.syncWithFireBase(spinner)
     }
 
 }

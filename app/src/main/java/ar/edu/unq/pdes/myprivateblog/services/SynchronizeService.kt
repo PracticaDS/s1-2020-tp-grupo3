@@ -1,6 +1,8 @@
 package ar.edu.unq.pdes.myprivateblog.services
 
 import android.content.Context
+import android.view.View
+import android.widget.ProgressBar
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
@@ -21,7 +23,7 @@ class SynchronizeService @Inject constructor(
 
     private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-    fun syncWithFireBase(){
+    fun syncWithFireBase(spinner : ProgressBar){
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if(currentUser != null){
@@ -78,6 +80,7 @@ class SynchronizeService @Inject constructor(
                         blogEntriesRepository.insertAll(it)
 
                     }.compose(RxSchedulers.completableAsync()).subscribe({
+                        spinner.visibility = View.GONE
                         Timber.d("todo bien")
                     },{Timber.d(it)})
                 }

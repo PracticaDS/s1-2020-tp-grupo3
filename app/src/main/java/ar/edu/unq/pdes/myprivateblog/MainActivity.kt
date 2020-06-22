@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+    lateinit var spinner : ProgressBar
     val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
     private lateinit var auth: FirebaseAuth
     val user = MutableLiveData<FirebaseUser?>()
@@ -61,12 +63,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         viewModel.authService.addAuthStateListener(viewModel.authStateListener)
-
         auth = FirebaseAuth.getInstance()
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         inject(this)
         setContentView(R.layout.activity_main)
-
+        spinner = findViewById<ProgressBar>(R.id.progressBar1)
+        spinner.visibility = View.GONE
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
 
@@ -125,7 +127,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_sync -> {
-                viewModel.sync()
+                spinner.visibility = View.VISIBLE
+                viewModel.sync(spinner)
                 Toast.makeText(this, "Sync clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
