@@ -29,6 +29,11 @@ class BlogEntriesRepository(val appDatabase: AppDatabase) {
             .delete(blogEntry)
             .subscribeOn(Schedulers.io())
 
+    fun deleteAll(blogEntries : List<BlogEntry>) =
+        appDatabase.blogEntriesDao()
+            .deleteAll(blogEntries)
+            .subscribeOn(Schedulers.io())
+
     fun insertAll(blogEntries : List<BlogEntry>) =
         appDatabase.blogEntriesDao()
             .insertAll(blogEntries)

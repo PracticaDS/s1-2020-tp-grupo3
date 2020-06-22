@@ -29,7 +29,8 @@ class PostService @Inject constructor(
                     uid = id,
                     bodyPath = it,
                     title = title,
-                    cardColor = cardColor
+                    cardColor = cardColor,
+                    synced = false
                 )
             )
         }.compose(RxSchedulers.completableAsync())

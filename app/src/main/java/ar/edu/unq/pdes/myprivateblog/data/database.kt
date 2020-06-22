@@ -106,20 +106,8 @@ interface BlogEntriesDao {
     @Delete
     fun delete(entry: BlogEntry): Completable
 
-    @Transaction
-    fun upsert(entry: BlogEntry) {
-        insert(entry)
-
-    }
-
-    @Transaction
-    fun upsertAll(entries: List<BlogEntry>) {
-        /*val updateList = insertAll(entries).andThen(getAll().)
-
-        if (updateList.isNotEmpty()) {
-            updateAll(updateList)
-        }*/
-    }
+    @Delete
+    fun deleteAll(entries: List<BlogEntry>): Completable
 }
 
 object ThreeTenTimeTypeConverters {

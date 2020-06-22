@@ -25,7 +25,7 @@ class SynchronizeService @Inject constructor(
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if(currentUser != null){
-            blogEntriesRepository.getBlogEntriesWith(false).observeForever { unsyncBlogs ->
+            blogEntriesRepository.getBlogEntriesWith(false, false).observeForever { unsyncBlogs ->
                 db.runBatch { batch ->
                     unsyncBlogs.forEach {
                         val path = it.bodyPath
@@ -80,28 +80,16 @@ class SynchronizeService @Inject constructor(
                     }.compose(RxSchedulers.completableAsync()).subscribe({
                         Timber.d("todo bien")
                     },{Timber.d(it)})
-//                    val blogsToInsert = mutableListOf<BlogEntry>()
-//                    val docs = result.map {
-//                        val possiblePost = it.toObject(BlogEntry::class.java)
-//                        val disp = postService.convertBody(it["body"] as String).map {
-//                            possiblePost.bodyPath = it
-//
-//                        }
-//                        possiblePost
-//                    }
-//                    for(document in docs){
-//
-//                        blogsToInsert.add(document)
-//
-//                    }
-//                    blogEntriesRepository.insertAll(blogsToInsert).subscribe({Timber.d("TODO OK")},{throwable: Throwable? ->  Timber.d(throwable)})
                 }
+
             blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
                 db.runBatch { batch ->
                     deletedBlogs.forEach {
                         val dbReference = db.collection(currentUser.uid).document(it.uid.toString())
                         batch.delete(dbReference)
                     }
+                }.addOnCompleteListener {
+                    blogEntriesRepository.deleteAll(deletedBlogs)
                 }
             }
         }
