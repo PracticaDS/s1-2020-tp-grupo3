@@ -29,7 +29,7 @@ class PostsListingTest {
 
     @Test
     fun toolbarIsVisibleWhenThereAreNoPosts() {
-        onView(withId(R.id.toolbar))
+        onView(withId(R.id.app_bar))
             .check(matches(isDisplayed()))
     }
 
@@ -37,7 +37,7 @@ class PostsListingTest {
     fun toolbarIsVisibleWhenThereArePosts() {
         postCreation()
         goBack()
-        onView(withId(R.id.toolbar))
+        onView(withId(R.id.app_bar))
             .check(matches(isDisplayed()))
     }
 
