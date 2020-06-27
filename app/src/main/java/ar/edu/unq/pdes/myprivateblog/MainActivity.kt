@@ -19,10 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -128,8 +125,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_sync -> {
                 spinner.visibility = View.VISIBLE
-                viewModel.sync(spinner)
-                Toast.makeText(this, "Sync clicked", Toast.LENGTH_SHORT).show()
+                viewModel.sync(spinner,this)
+                Toast.makeText(this, "Comienzo de sincronizacion", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
                 viewModel.signOut()

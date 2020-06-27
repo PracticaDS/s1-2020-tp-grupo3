@@ -3,6 +3,9 @@ package ar.edu.unq.pdes.myprivateblog.services
 import android.content.Context
 import android.view.View
 import android.widget.ProgressBar
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
@@ -21,11 +24,13 @@ class SynchronizeService @Inject constructor(
     val blogEntriesRepository: BlogEntriesRepository,
     val context: Context,
     val postService: PostService){
-
+    lateinit var getBlogsObserver : Observer<List<BlogEntry>>
+    lateinit var deleteBlogsObserver : Observer<List<BlogEntry>>
     private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-    fun updateBlogsFireBase(currentUser: FirebaseUser) {
-        blogEntriesRepository.getBlogEntriesWith(false, false).observeForever { unsyncBlogs ->
+    fun updateBlogsFireBase(currentUser: FirebaseUser, lifecycleOwner: LifecycleOwner) {
+        val blogEntries = blogEntriesRepository.getBlogEntriesWith(false, false)
+        getBlogsObserver = Observer<List<BlogEntry>> { unsyncBlogs ->
             db.runBatch { batch ->
                 unsyncBlogs.forEach {
                     val path = it.bodyPath
@@ -49,10 +54,12 @@ class SynchronizeService @Inject constructor(
                     it.synced = true
                     blogEntriesRepository.updateBlogEntry(it)
                 }
+                blogEntries.removeObserver(this.getBlogsObserver)
             }.addOnFailureListener {
                 Timber.d(it)
             }
         }
+        blogEntries.observe(lifecycleOwner,getBlogsObserver )
     }
 
     fun updateBlogsLocalBase(currentUser: FirebaseUser, spinner: ProgressBar) {
@@ -86,8 +93,9 @@ class SynchronizeService @Inject constructor(
             }
     }
 
-    fun deleteBlogsLocalBase(currentUser: FirebaseUser) {
-        blogEntriesRepository.getBlogEntriesWith(true).observeForever { deletedBlogs ->
+    fun deleteBlogsLocalBase(currentUser: FirebaseUser,lifecycleOwner: LifecycleOwner) {
+        val blogEntries = blogEntriesRepository.getBlogEntriesWith(true)
+        deleteBlogsObserver = Observer{ deletedBlogs ->
             db.runBatch { batch ->
                 deletedBlogs.forEach {
                     val dbReference = db.collection(currentUser.uid).document(it.uid.toString())
@@ -95,17 +103,19 @@ class SynchronizeService @Inject constructor(
                 }
             }.addOnCompleteListener {
                 blogEntriesRepository.deleteAll(deletedBlogs)
+                blogEntries.removeObserver(deleteBlogsObserver)
             }
         }
+        blogEntries.observe(lifecycleOwner, deleteBlogsObserver)
     }
 
-    fun syncWithFireBase(spinner : ProgressBar){
+    fun syncWithFireBase(spinner : ProgressBar, lifecycleOwner: LifecycleOwner){
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if(currentUser != null){
-            updateBlogsFireBase(currentUser)
+            updateBlogsFireBase(currentUser,lifecycleOwner)
             updateBlogsLocalBase(currentUser,spinner)
-            deleteBlogsLocalBase(currentUser)
+            deleteBlogsLocalBase(currentUser,lifecycleOwner)
         }
     }
 }
