@@ -9,7 +9,6 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 class EncryptionServiceTest {
 

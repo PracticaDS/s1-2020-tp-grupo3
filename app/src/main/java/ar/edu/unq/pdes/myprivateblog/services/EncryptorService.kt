@@ -2,8 +2,6 @@ package ar.edu.unq.pdes.myprivateblog.services
 
 import android.content.Context
 import android.util.Base64
-import androidx.core.content.edit
-import ar.edu.unq.pdes.myprivateblog.R
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.SecureRandom
