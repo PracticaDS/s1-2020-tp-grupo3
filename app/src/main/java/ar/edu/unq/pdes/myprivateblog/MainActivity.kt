@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
@@ -48,9 +49,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var auth: FirebaseAuth
     val user = MutableLiveData<FirebaseUser?>()
     lateinit var authenticationState : LiveData<AuthenticationState>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidInjection.inject(this)
+        inject(this)
 
         authenticationState = viewModel.authenticated.map { user ->
             if (user != null) {
@@ -64,17 +66,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         inject(this)
         setContentView(R.layout.activity_main)
-        spinner = findViewById<ProgressBar>(R.id.progressBar1)
+        spinner = findViewById(R.id.progressBar1)
         spinner.visibility = View.GONE
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+
+        toolbar = findViewById(R.id.app_bar)
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, 0, 0
         )
 
+
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        navView.bringToFront()
         navView.setNavigationItemSelectedListener(this)
 
         authenticationState.observe(this, androidx.lifecycle.Observer {
@@ -140,6 +150,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     enum class AuthenticationState {

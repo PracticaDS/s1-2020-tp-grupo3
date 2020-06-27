@@ -41,10 +41,12 @@ abstract class BaseFragment : DaggerFragment() {
 
         if (brightness > lumaThreshold) {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            getMainActivity().toolbar.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
             window.decorView.systemUiVisibility = 0 // clear all flags
+            getMainActivity().toolbar.systemUiVisibility = 0
         }
-
+        getMainActivity().toolbar.setBackgroundColor(backgroundColor)
         window.statusBarColor = backgroundColor
     }
 
