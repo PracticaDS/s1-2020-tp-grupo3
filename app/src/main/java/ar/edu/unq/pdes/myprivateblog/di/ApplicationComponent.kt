@@ -19,6 +19,8 @@ import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingViewModel
 import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
 import ar.edu.unq.pdes.myprivateblog.services.EncryptionService
 import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
+import ar.edu.unq.pdes.myprivateblog.services.PostService
+import ar.edu.unq.pdes.myprivateblog.services.SynchronizeService
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.*
 import dagger.android.AndroidInjector
@@ -58,6 +60,12 @@ open class ApplicationModule {
     @Provides
     fun provideBlogEntriesRepository(appDatabase: AppDatabase): BlogEntriesRepository {
         return BlogEntriesRepository(appDatabase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSynchronizeService(blogEntriesRepository: BlogEntriesRepository, context: Context,postService: PostService): SynchronizeService {
+        return SynchronizeService(blogEntriesRepository, context,postService)
     }
 }
 

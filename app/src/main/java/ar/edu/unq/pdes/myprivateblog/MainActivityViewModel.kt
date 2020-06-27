@@ -1,5 +1,7 @@
 package ar.edu.unq.pdes.myprivateblog
 
+import android.widget.ProgressBar
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
@@ -7,12 +9,13 @@ import ar.edu.unq.pdes.myprivateblog.data.FirebaseUserLiveData
 import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateViewModel
 import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
 import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
+import ar.edu.unq.pdes.myprivateblog.services.SynchronizeService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 class MainActivityViewModel  @Inject constructor(
-    val authService : AuthenticationService/* add injectable dependencies here */
+    val authService : AuthenticationService,private val syncServ : SynchronizeService
 ) : ViewModel() {
 
     val authenticated : MutableLiveData<FirebaseUser?> = MutableLiveData(null)
@@ -21,8 +24,12 @@ class MainActivityViewModel  @Inject constructor(
         authenticated.value = it.currentUser
     }
 
-    fun signOut(){
+    fun signOut() {
         authService.signOut()
+    }
+
+    fun sync(spinner : ProgressBar, lifecycleOwner: LifecycleOwner){
+        syncServ.syncWithFireBase(spinner,lifecycleOwner)
     }
 
 }
