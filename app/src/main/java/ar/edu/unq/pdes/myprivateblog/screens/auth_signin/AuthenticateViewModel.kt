@@ -40,4 +40,8 @@ class AuthenticateViewModel @Inject constructor(
         trackEvents.logEvent("login-failed")
     }
 
+    fun storePassword(password: String){
+        authService.storePassword(password)
+    }
+
 }

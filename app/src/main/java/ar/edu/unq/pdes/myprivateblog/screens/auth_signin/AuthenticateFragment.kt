@@ -3,6 +3,7 @@ package ar.edu.unq.pdes.myprivateblog.screens.auth_signin
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -35,6 +36,7 @@ class AuthenticateFragment : BaseFragment() {
     }
 
     private fun goToPostListing(){
+        storePassword()
         findNavController().navigate(
             AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
         )
@@ -53,6 +55,12 @@ class AuthenticateFragment : BaseFragment() {
         )
     }
 
+    private fun storePassword(){
+        //TODO: Agregar una forma de validar que el usaurio haya cargado esta clave antes de poder precionar en login
+        val editText: EditText = getMainActivity().findViewById(R.id.password_input)
+        val data: String = editText.text.toString()
+        viewModel.storePassword(data)
+    }
 
     private fun showToast(message: String) {
         Toast.makeText(getMainActivity(), message, Toast.LENGTH_SHORT).show()
