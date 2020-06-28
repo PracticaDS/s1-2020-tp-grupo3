@@ -9,6 +9,7 @@
     <string name="sync">Sincronizar</string>
     <string name="signOut">Salir</string>
     <string name="signIn">Ingresar</string>
+    <string name="password_hint">Elije una contraseña</string>
     <string name="accountSettings">Cuenta</string>
     <string name="no_auth_user">Usuario anónimo</string>
     <string name="preference_file_key">FILE_KEY</string>
@@ -18,4 +19,5 @@
     <string name="save">Guardar</string>
     <string name="password_view_text">Elija una contraseña para asegurar su contenido</string>
     <string name="password_store_fail">Falló el guardado de contraseña</string>
+    <string name="password_requirements">Con mayúsculas, minúsclas y números</string>
 </resources>

@@ -60,6 +60,7 @@ class SynchronizeService @Inject constructor(
                         var synced = it.synced
                     }
                     batch.set(dbReference, firebasePost, SetOptions.merge())
+
                 }
             }.addOnSuccessListener {
                 unsyncBlogs.forEach {

@@ -65,13 +65,6 @@ class AuthenticateFragment : BaseFragment() {
         )
     }
 
-    private fun storePassword(){
-        //TODO: Agregar una forma de validar que el usaurio haya cargado esta clave antes de poder precionar en login
-        val editText: EditText = getMainActivity().findViewById(R.id.password_input)
-        val data: String = editText.text.toString()
-        viewModel.storePassword(data)
-    }
-
     private fun showToast(message: String) {
         Toast.makeText(getMainActivity(), message, Toast.LENGTH_SHORT).show()
     }
