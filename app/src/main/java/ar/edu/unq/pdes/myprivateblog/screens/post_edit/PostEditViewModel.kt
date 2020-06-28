@@ -8,6 +8,7 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.services.PostService
+import com.google.firebase.firestore.FirebaseFirestore
 import java.io.File
 import javax.inject.Inject
 

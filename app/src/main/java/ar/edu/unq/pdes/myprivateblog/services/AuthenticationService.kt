@@ -34,6 +34,7 @@ class FirebaseAuthService @Inject constructor(context: Context) : Authentication
     override fun loggedIn() = currentUser() != null
 
     override fun signOut() {
+        firebaseAuth.signOut()
         googleClient.signOut()
     }
 
