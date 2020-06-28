@@ -23,17 +23,10 @@ class PasswordFragment: BaseFragment() {
     private val viewModel by viewModels<PasswordViewModel> { viewModelFactory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        /*TODO: encontrar una manera de identificar si el usuario ya estaba logeado,
-                solo en este caso no pedir input de password (si existe en el storage local)
-        */
-//        if (!viewModel.authService.retrievePassword().isNullOrEmpty()) {
-//            goToPostListing()
-//        } else {
-            setupFloatingLabelError()
-            save_password.setOnClickListener {
-                storePassword()
-            }
-//        }
+        setupFloatingLabelError()
+        save_password.setOnClickListener {
+            storePassword()
+        }
     }
 
     private fun goToPostListing(){
@@ -44,8 +37,7 @@ class PasswordFragment: BaseFragment() {
 
     private fun getPassowrd(): String {
         val editText: EditText = getMainActivity().findViewById(R.id.password)
-        val password: String = editText.text.toString()
-        return password
+        return editText.text.toString()
     }
 
     private fun storePassword(){

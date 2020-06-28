@@ -39,7 +39,6 @@ class AuthenticateFragment : BaseFragment() {
     }
 
     private fun goToPostListing(){
-//        storePassword()
         findNavController().navigate(
             AuthenticateFragmentDirections.actionAuthenticateFragmentToPostsListingFragment()
         )
