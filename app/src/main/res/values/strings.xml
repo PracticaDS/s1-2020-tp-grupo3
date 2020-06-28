@@ -15,4 +15,7 @@
     <string name="secret_key">SECRET_KEY</string>
     <string name="signedOut">Sesión cerrada</string>
     <string name="auth_failed">Falló la autenticación</string>
+    <string name="save">Guardar</string>
+    <string name="password_view_text">Elija una contraseña para asegurar su contenido</string>
+    <string name="password_store_fail">Falló el guardado de contraseña</string>
 </resources>

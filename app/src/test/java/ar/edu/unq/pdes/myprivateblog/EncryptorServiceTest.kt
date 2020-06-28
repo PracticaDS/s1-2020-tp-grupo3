@@ -27,7 +27,7 @@ class EncryptionServiceTest {
         val someString = "A String"
 
         val inputStream = ByteArrayInputStream(
-            someString.encodeToByteArray()
+            someString.toByteArray(Charsets.UTF_8)
         )
 
         val outputStream = ByteArrayOutputStream()
@@ -41,6 +41,6 @@ class EncryptionServiceTest {
 
         encryptionService.decrypt(decryptInputStream, decryptOutputStream)
 
-        assertEquals(someString, decryptOutputStream.toByteArray().decodeToString())
+        assertEquals(someString, decryptOutputStream.toByteArray().toString(Charsets.UTF_8))
     }
 }
