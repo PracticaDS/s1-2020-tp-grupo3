@@ -36,9 +36,7 @@ fun goBack() = Espresso.onView(ViewMatchers.withId(R.id.btn_back)).perform(ViewA
 
 fun writePassword(){
     Espresso.onView(ViewMatchers.withId(R.id.password))
-        .perform(ViewActions.typeText("goodPASSWORD123"))
-
-    Espresso.pressBack()
+        .perform(ViewActions.replaceText("goodPASSWORD123"))
 
     Espresso.onView(ViewMatchers.withId(R.id.save_password))
         .perform(ViewActions.click())
