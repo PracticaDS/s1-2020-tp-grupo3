@@ -6,6 +6,7 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
+import org.hamcrest.CoreMatchers.not
 
 fun postCreation(){
     Espresso.onView(ViewMatchers.withId(R.id.create_new_post))
@@ -35,8 +36,17 @@ fun postCreation(){
 fun goBack() = Espresso.onView(ViewMatchers.withId(R.id.btn_back)).perform(ViewActions.click())
 
 fun writePassword(){
+    Espresso.onView(ViewMatchers.withId(R.id.save_password))
+        .check(ViewAssertions.matches(not(ViewMatchers.isEnabled())))
+
     Espresso.onView(ViewMatchers.withId(R.id.password))
         .perform(ViewActions.replaceText("goodPASSWORD123"))
+
+    Espresso.onView(ViewMatchers.withId(R.id.password))
+        .perform(ViewActions.closeSoftKeyboard())
+
+    Espresso.onView(ViewMatchers.withId(R.id.save_password))
+        .check(ViewAssertions.matches(ViewMatchers.isEnabled()))
 
     Espresso.onView(ViewMatchers.withId(R.id.save_password))
         .perform(ViewActions.click())
