@@ -14,6 +14,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +27,11 @@ class PostsListingTest {
     @get:Rule
     var activityRule: ActivityScenarioRule<MainActivity> =
         ActivityScenarioRule(MainActivity::class.java)
+
+    @Before
+    fun setUp(){
+        writePassword()
+    }
 
     @Test
     fun toolbarIsVisibleWhenThereAreNoPosts() {

@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_sync -> {
                 spinner.visibility = View.VISIBLE
                 viewModel.sync(spinner,this)
-                Toast.makeText(this, "Comienzo de sincronizacion", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Comienzo de sincronizacion", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
                 viewModel.signOut()

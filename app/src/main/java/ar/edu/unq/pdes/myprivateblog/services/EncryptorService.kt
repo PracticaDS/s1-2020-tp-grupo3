@@ -1,7 +1,12 @@
 package ar.edu.unq.pdes.myprivateblog.services
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
+import android.widget.Toast
+import androidx.core.content.res.TypedArrayUtils
+import ar.edu.unq.pdes.myprivateblog.R
+import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.SecureRandom
@@ -17,7 +22,6 @@ class EncryptionService @Inject constructor(val context: Context, val authentica
     private val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
 
     fun encrypt(inputStream: InputStream, outputStream: OutputStream) {
-
         val password = retrievePassword()
 
         val salt = ByteArray(cipher.blockSize)
@@ -51,8 +55,8 @@ class EncryptionService @Inject constructor(val context: Context, val authentica
         val iv = ByteArray(cipher.blockSize)
 
         encryptedInput.use {
-            it.read(salt,0,cipher.blockSize)
-            it.read(iv,0,cipher.blockSize)
+            it.read(salt, 0, cipher.blockSize)
+            it.read(iv, 0, cipher.blockSize)
         }
 
         val secretKey = generateSecretKey(password, salt)
@@ -75,19 +79,6 @@ class EncryptionService @Inject constructor(val context: Context, val authentica
 
     fun retrievePassword(): String{
         return authenticationService.retrievePassword()
-    }
-
-    fun storePassword(password: String){
-        authenticationService.storePassword(password)
-    }
-
-    //Not used methods
-
-    private fun encodeSecretKey(secretKey: SecretKey): String = Base64.encodeToString(secretKey.encoded, Base64.NO_WRAP)
-
-    private fun decodeSecretKey(key: String): SecretKey {
-        val decodedKey = Base64.decode(key, Base64.NO_WRAP)
-        return SecretKeySpec(decodedKey, 0, decodedKey.size, algorithm)
     }
 
 }

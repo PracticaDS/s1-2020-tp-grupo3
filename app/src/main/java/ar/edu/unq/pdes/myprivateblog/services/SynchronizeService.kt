@@ -5,9 +5,11 @@ import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
@@ -60,7 +62,6 @@ class SynchronizeService @Inject constructor(
                         var synced = it.synced
                     }
                     batch.set(dbReference, firebasePost, SetOptions.merge())
-
                 }
             }.addOnSuccessListener {
                 unsyncBlogs.forEach {
@@ -69,6 +70,7 @@ class SynchronizeService @Inject constructor(
                 }
                 blogEntries.removeObserver(this.getBlogsObserver)
             }.addOnFailureListener {
+                Toast.makeText(context, "Falopaa", Toast.LENGTH_LONG).show()
                 Timber.d(it)
             }
         }
@@ -103,13 +105,16 @@ class SynchronizeService @Inject constructor(
                     }
                     blogs
                 }.flatMapCompletable {
-
                     blogEntriesRepository.insertAll(it)
-
                 }.compose(RxSchedulers.completableAsync()).subscribe({
                     spinner.visibility = View.GONE
-                    Timber.d("todo bien")
-                },{Timber.d(it)})
+                },{
+                    if(it is IOException){
+                        Toast.makeText(context, R.string.encryptor_error, Toast.LENGTH_LONG).show()
+                    }
+                    spinner.visibility = View.GONE
+                    Timber.d(it)
+                })
             }
     }
 
@@ -138,27 +143,4 @@ class SynchronizeService @Inject constructor(
             deleteBlogsLocalBase(currentUser,lifecycleOwner)
         }
     }
-
-    private fun getBlogEntryFirestore (blogEntry: BlogEntry, outputStream: OutputStream): BlogEntryFirestore {
-        val contentInputStream = File(context.filesDir, blogEntry.bodyPath!!).inputStream()
-        encryptionService.encrypt(contentInputStream, outputStream)
-        return BlogEntryFirestore(
-            blogEntry.uid,
-            blogEntry.title,
-            blogEntry.imagePath,
-            blogEntry.deleted,
-            blogEntry.date,
-            blogEntry.cardColor
-        )
-    }
 }
-
-
-
-private class BlogEntryFirestore(var uid: EntityID? = null,
-                                 var title: String = "",
-                                 var imagePath: String? = "",
-                                 var deleted: Boolean = false,
-                                 var date: OffsetDateTime? = null,
-                                 var cardColor: Int? = Color.WHITE,
-                                 var body: String? = null): Serializable
