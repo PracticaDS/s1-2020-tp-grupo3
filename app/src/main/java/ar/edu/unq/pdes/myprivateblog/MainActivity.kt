@@ -105,16 +105,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navUserPhoto = headerView.findViewById<ImageView>(R.id.user_photo)
         val menuNav : Menu = navView.menu
         val sync : MenuItem = menuNav.findItem(R.id.nav_sync)
-        sync.isVisible = currentUser != null
+        sync.isVisible = viewModel.authService.loggedIn()
         val logout : MenuItem = menuNav.findItem(R.id.nav_logout)
-        logout.isVisible = currentUser != null
+        logout.isVisible = viewModel.authService.loggedIn()
         val login : MenuItem = menuNav.findItem(R.id.nav_login)
-        login.isVisible = currentUser == null
-        navUserEmail.isVisible = currentUser != null
-        if(currentUser != null){
-            navUsername.text = currentUser.displayName
-            navUserEmail.text = currentUser.email
-            Picasso.get().load(currentUser.photoUrl).into(navUserPhoto)
+        login.isVisible = !viewModel.authService.loggedIn()
+        navUserEmail.isVisible = viewModel.authService.loggedIn()
+        if(viewModel.authService.loggedIn()){
+            navUsername.text = currentUser?.displayName
+            navUserEmail.text = currentUser?.email
+            Picasso.get().load(currentUser?.photoUrl).into(navUserPhoto)
         }
         else{
             navUsername.text = getText(R.string.no_auth_user)

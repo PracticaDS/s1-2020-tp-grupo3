@@ -11,13 +11,14 @@ import ar.edu.unq.pdes.myprivateblog.data.FirebaseUserLiveData
 import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateViewModel
 import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
 import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
+import ar.edu.unq.pdes.myprivateblog.services.SyncService
 import ar.edu.unq.pdes.myprivateblog.services.SynchronizeService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 class MainActivityViewModel  @Inject constructor(
-    val authService : AuthenticationService,private val syncServ : SynchronizeService
+    val authService : AuthenticationService,private val syncServ : SyncService
 ) : ViewModel() {
 
     val authenticated : MutableLiveData<FirebaseUser?> = MutableLiveData(null)

@@ -18,11 +18,7 @@ import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_edit.PostEditViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingFragment
 import ar.edu.unq.pdes.myprivateblog.screens.posts_listing.PostsListingViewModel
-import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
-import ar.edu.unq.pdes.myprivateblog.services.EncryptionService
-import ar.edu.unq.pdes.myprivateblog.services.FirebaseAuthService
-import ar.edu.unq.pdes.myprivateblog.services.PostService
-import ar.edu.unq.pdes.myprivateblog.services.SynchronizeService
+import ar.edu.unq.pdes.myprivateblog.services.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.*
 import dagger.android.AndroidInjector
@@ -39,7 +35,8 @@ import javax.inject.Singleton
         MainActivityModule::class,
         GoogleAnalytics::class,
         AuthenticationModule::class,
-        EncryptionModule::class
+        EncryptionModule::class,
+        SynchronizeModule::class
     ])
 interface ApplicationComponent : AndroidInjector<BaseApplication> {
 
@@ -64,11 +61,7 @@ open class ApplicationModule {
         return BlogEntriesRepository(appDatabase)
     }
 
-    @Singleton
-    @Provides
-    fun provideSynchronizeService(blogEntriesRepository: BlogEntriesRepository, context: Context, encryptionService: EncryptionService, postService: PostService): SynchronizeService {
-        return SynchronizeService(blogEntriesRepository, context, encryptionService, postService)
-    }
+
 }
 
 @Module
@@ -88,7 +81,8 @@ open class GoogleAnalytics {
         PostEditModule::class,
         PostCreateModule::class,
         AuthenticateModule::class,
-        PasswordModule::class
+        PasswordModule::class,
+        SynchronizeModule::class
     ]
 )
 abstract class MainActivityModule {
@@ -215,5 +209,14 @@ open class EncryptionModule {
     @Provides
     open fun provideEncryptionService(context: Context, authenticationService: AuthenticationService): EncryptionService {
         return EncryptionService(context, authenticationService)
+    }
+}
+
+@Module
+open  class SynchronizeModule {
+    @Singleton
+    @Provides
+    fun provideSynchronizeService(blogEntriesRepository: BlogEntriesRepository, context: Context, encryptionService: EncryptionService, postService: PostService): SyncService {
+        return SynchronizeService(blogEntriesRepository, context, encryptionService, postService)
     }
 }
