@@ -2,13 +2,13 @@ package ar.edu.unq.pdes.myprivateblog
 
 import android.content.Context
 import ar.edu.unq.pdes.myprivateblog.services.EncryptionService
+import ar.edu.unq.pdes.myprivateblog.services.MockAuthService
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 class EncryptionServiceTest {
 
@@ -18,7 +18,7 @@ class EncryptionServiceTest {
     @Before
     fun setup() {
         context = mock(Context::class.java)
-        encryptionService = EncryptionService(context)
+        encryptionService = EncryptionService(context, MockAuthService())
     }
 
     @ExperimentalStdlibApi
@@ -27,46 +27,20 @@ class EncryptionServiceTest {
         val someString = "A String"
 
         val inputStream = ByteArrayInputStream(
-            someString.encodeToByteArray()
+            someString.toByteArray(Charsets.UTF_8)
         )
 
         val outputStream = ByteArrayOutputStream()
 
-        val secretKey = encryptionService.generateSecretKey()!!
-
-        encryptionService.encrypt(secretKey, inputStream, outputStream)
+        encryptionService.encrypt(inputStream, outputStream)
         val encodeString = outputStream.toByteArray()
 
         val decryptInputStream = ByteArrayInputStream(encodeString)
 
         val decryptOutputStream = ByteArrayOutputStream()
 
-        encryptionService.decrypt(secretKey, decryptInputStream, decryptOutputStream)
+        encryptionService.decrypt(decryptInputStream, decryptOutputStream)
 
-        assertEquals(someString, decryptOutputStream.toByteArray().decodeToString())
-    }
-
-    @ExperimentalStdlibApi
-    @Test(expected = IOException::class)
-    fun whenDecryptingAStringWithAWrongKey_shouldNotDecryptCorrectly() {
-        val someString = "A String"
-
-        val inputStream = ByteArrayInputStream(
-            someString.encodeToByteArray()
-        )
-
-        val outputStream = ByteArrayOutputStream()
-
-        val secretKey = encryptionService.generateSecretKey()!!
-        val wrongSecretKey = encryptionService.generateSecretKey()!!
-
-        encryptionService.encrypt(secretKey, inputStream, outputStream)
-        val encodeString = outputStream.toByteArray()
-
-        val decryptInputStream = ByteArrayInputStream(encodeString)
-
-        val decryptOutputStream = ByteArrayOutputStream()
-
-        encryptionService.decrypt(wrongSecretKey, decryptInputStream, decryptOutputStream)
+        assertEquals(someString, decryptOutputStream.toByteArray().toString(Charsets.UTF_8))
     }
 }

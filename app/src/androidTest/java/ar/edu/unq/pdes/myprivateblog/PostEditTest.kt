@@ -17,6 +17,7 @@ import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withBackgroundColor
 import ar.edu.unq.pdes.myprivateblog.MatcherUtils.Companion.withTintColor
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
+import org.junit.Before
 
 import org.junit.Rule
 import org.junit.Test
@@ -35,6 +36,11 @@ class PostEditTest {
     val OLD_TITLE = "Nuevo post"
     val NEW_BODY = "Este es un post de prueba editado"
     val OLD_BODY = "Este es un post de prueba"
+
+    @Before
+    fun setUp(){
+        writePassword()
+    }
 
     @Test
     fun whenTappingOnUpdatePost_postEditionScreenShouldOpen() {

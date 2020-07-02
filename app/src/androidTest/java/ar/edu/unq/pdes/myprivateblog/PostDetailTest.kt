@@ -21,6 +21,7 @@ class PostDetailTest {
 
     @Test
     fun whenTapingOnDeletePostButton_postShouldBeRemoved(){
+        writePassword()
         postCreation()
 
         Espresso.onView(ViewMatchers.withId(R.id.btn_delete))

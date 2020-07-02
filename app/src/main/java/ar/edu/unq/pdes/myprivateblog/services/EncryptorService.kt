@@ -1,97 +1,84 @@
 package ar.edu.unq.pdes.myprivateblog.services
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
-import androidx.core.content.edit
+import android.widget.Toast
+import androidx.core.content.res.TypedArrayUtils
 import ar.edu.unq.pdes.myprivateblog.R
+import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.SecureRandom
 import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
-class EncryptionService @Inject constructor(val context: Context) {
+class EncryptionService @Inject constructor(val context: Context, val authenticationService: AuthenticationService) {
 
     private val algorithm: String = "AES"
-    private val transformation: String = "AES/CBC/PKCS5PADDING"
-    private val cipher = Cipher.getInstance(transformation)
+    private val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
 
-    fun encrypt(key: SecretKey, plainText: InputStream, outputStream: OutputStream) {
+    fun encrypt(inputStream: InputStream, outputStream: OutputStream) {
+        val password = retrievePassword()
 
         val salt = ByteArray(cipher.blockSize)
         SecureRandom().nextBytes(salt)
 
-        val data = key.encoded
-        val skeySpec = SecretKeySpec(data, 0, data.size, algorithm)
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, IvParameterSpec(salt))
+        val iv = ByteArray(cipher.blockSize)
+        SecureRandom().nextBytes(iv)
 
-        val output = CipherOutputStream(outputStream,cipher)
+        val secretKey = generateSecretKey(password, salt)
+
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, IvParameterSpec(iv))
+
+        val output = CipherOutputStream(outputStream, cipher)
 
         outputStream.use {
             it.write(salt)
+            it.write(iv)
         }
 
         output.use {
-            plainText.use {
+            inputStream.use {
                 it.copyTo(output)
             }
         }
     }
 
-    fun decrypt(key: SecretKey, encryptedInput: InputStream, outputStream: OutputStream) {
+    fun decrypt(encryptedInput: InputStream, outputStream: OutputStream) {
+        val password = retrievePassword()
 
         val salt = ByteArray(cipher.blockSize)
+        val iv = ByteArray(cipher.blockSize)
+
         encryptedInput.use {
-            it.read(salt,0,cipher.blockSize)
+            it.read(salt, 0, cipher.blockSize)
+            it.read(iv, 0, cipher.blockSize)
         }
 
-        cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(salt))
+        val secretKey = generateSecretKey(password, salt)
 
-        val cipherInput = CipherInputStream(encryptedInput,cipher)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(iv))
+
+        val cipherInput = CipherInputStream(encryptedInput, cipher)
 
         cipherInput.use {
             it.copyTo(outputStream)
         }
     }
 
-    fun generateSecretKey(): SecretKey? {
-        val secureRandom = SecureRandom()
-        val keyGenerator = KeyGenerator.getInstance(algorithm)
-        keyGenerator?.init(256, secureRandom)
-        return keyGenerator?.generateKey()
+    private fun generateSecretKey(password: String, salt: ByteArray): SecretKeySpec {
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+        val spec =  PBEKeySpec(password.toCharArray(), salt, 1536, 256)
+        val tmp = factory.generateSecret(spec)
+        return SecretKeySpec(tmp.encoded, algorithm)
     }
 
-    private fun encodeSecretKey(secretKey: SecretKey): String = Base64.encodeToString(secretKey.encoded, Base64.NO_WRAP)
-
-    private fun decodeSecretKey(key: String): SecretKey {
-        val decodedKey = Base64.decode(key, Base64.NO_WRAP)
-        return SecretKeySpec(decodedKey, 0, decodedKey.size, algorithm)
+    fun retrievePassword(): String{
+        return authenticationService.retrievePassword()
     }
 
-    fun storeSecretKey(secretKey: SecretKey) {
-        val encodedSecretKey = encodeSecretKey(secretKey)
-        val sharedPreferences = context.getSharedPreferences(
-            context.getString(R.string.preference_file_key),
-            Context.MODE_PRIVATE
-        )
-        sharedPreferences.edit {
-            this.putString(context.getString(R.string.secret_key), encodedSecretKey)
-            this.commit()
-        }
-    }
-
-    fun retrieveSecretKey(): SecretKey? {
-        val sharedPreferences = context.getSharedPreferences(
-            context.getString(R.string.preference_file_key),
-            Context.MODE_PRIVATE
-        )
-        val encodedSecretKey = sharedPreferences.getString(context.getString(R.string.secret_key), null)
-        return if (encodedSecretKey != null) {
-            decodeSecretKey(encodedSecretKey)
-        } else {
-            null
-        }
-    }
 }

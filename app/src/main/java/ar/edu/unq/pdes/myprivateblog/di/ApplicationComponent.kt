@@ -8,6 +8,8 @@ import ar.edu.unq.pdes.myprivateblog.MainActivityViewModel
 import ar.edu.unq.pdes.myprivateblog.data.*
 import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateFragment
 import ar.edu.unq.pdes.myprivateblog.screens.auth_signin.AuthenticateViewModel
+import ar.edu.unq.pdes.myprivateblog.screens.password_input.PasswordFragment
+import ar.edu.unq.pdes.myprivateblog.screens.password_input.PasswordViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateFragment
 import ar.edu.unq.pdes.myprivateblog.screens.post_create.PostCreateViewModel
 import ar.edu.unq.pdes.myprivateblog.screens.post_detail.PostDetailFragment
@@ -64,8 +66,8 @@ open class ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideSynchronizeService(blogEntriesRepository: BlogEntriesRepository, context: Context,postService: PostService): SynchronizeService {
-        return SynchronizeService(blogEntriesRepository, context,postService)
+    fun provideSynchronizeService(blogEntriesRepository: BlogEntriesRepository, context: Context, encryptionService: EncryptionService, postService: PostService): SynchronizeService {
+        return SynchronizeService(blogEntriesRepository, context, encryptionService, postService)
     }
 }
 
@@ -85,7 +87,8 @@ open class GoogleAnalytics {
         PostDetailModule::class,
         PostEditModule::class,
         PostCreateModule::class,
-        AuthenticateModule::class
+        AuthenticateModule::class,
+        PasswordModule::class
     ]
 )
 abstract class MainActivityModule {
@@ -180,6 +183,22 @@ abstract class AuthenticateModule {
 }
 
 @Module
+abstract class PasswordModule {
+
+    @ContributesAndroidInjector(
+        modules = [
+            ViewModelBuilder::class
+        ]
+    )
+    internal abstract fun passwordFragment(): PasswordFragment
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PasswordViewModel::class)
+    abstract fun bindViewModel(viewmodel: PasswordViewModel): ViewModel
+}
+
+@Module
 open class AuthenticationModule {
 
     @Singleton
@@ -194,7 +213,7 @@ open class EncryptionModule {
 
     @Singleton
     @Provides
-    open fun provideEncryptionService(context: Context): EncryptionService {
-        return EncryptionService(context)
+    open fun provideEncryptionService(context: Context, authenticationService: AuthenticationService): EncryptionService {
+        return EncryptionService(context, authenticationService)
     }
 }
