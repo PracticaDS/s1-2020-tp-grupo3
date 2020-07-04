@@ -64,7 +64,7 @@ class SynchronizeService @Inject constructor(
                 }
                 blogEntries.removeObserver(this.getBlogsObserver)
             }.addOnFailureListener {
-                Toast.makeText(context, "Error al sincronizar los posts", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.sync_failed, Toast.LENGTH_LONG).show()
                 Timber.d(it)
             }
         }
@@ -123,11 +123,11 @@ class SynchronizeService @Inject constructor(
             }.addOnCompleteListener {
                 if(it.isSuccessful) {
                     blogEntriesRepository.deleteAll(deletedBlogs)
-                    Toast.makeText(context,"Sincronización finalizada",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,R.string.sync_success,Toast.LENGTH_LONG).show()
                 }
                 else{
                     Timber.d(it.exception)
-                    Toast.makeText(context,"Falló la sincronización",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,R.string.sync_failed,Toast.LENGTH_LONG).show()
                 }
                 blogEntries.removeObserver(deleteBlogsObserver)
             }

@@ -31,7 +31,6 @@ class PostDetailFragment : BaseFragment() {
     private val args: PostDetailFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //throw RuntimeException("This is a crash");
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.fetchBlogEntry(args.postId)

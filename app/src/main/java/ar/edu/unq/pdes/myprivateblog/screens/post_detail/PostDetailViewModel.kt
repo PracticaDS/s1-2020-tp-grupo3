@@ -52,7 +52,7 @@ class PostDetailViewModel @Inject constructor(
 
     fun deletePost(){
         val disposable = postService.deletePost(post.value!!).subscribe({
-            trackEvents.logEvent("postDeleted")
+            trackEvents.logEvent("post-deleted")
             errors.value = null
         },{throwable ->
             Timber.d(throwable)
