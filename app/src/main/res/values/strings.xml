@@ -21,4 +21,5 @@
     <string name="password_store_fail">Falló el guardado de contraseña</string>
     <string name="password_requirements">Con mayúsculas, minúsclas y números</string>
     <string name="encryptor_error">Hubo un error de encriptación.\nPor favor revise su clave</string>
+    <string name="undo_action">Deshacer acción</string>
 </resources>

@@ -8,6 +8,7 @@ import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.OutputStreamWriter
 import java.util.*
 import javax.inject.Inject
@@ -57,7 +58,12 @@ class PostService @Inject constructor(
                     deleted = true
                 )
         ).compose(RxSchedulers.completableAsync())
+    }
 
+    fun undoDelete(post: BlogEntry) : Completable {
+        return blogEntriesRepository.updateBlogEntry(post.copy(deleted = false)).observeOn(
+            AndroidSchedulers.mainThread()
+        )
     }
 
     fun createPost(cardColor : Int, body: String, title : String) : Flowable<Long>{
