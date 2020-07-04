@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.navigation.NavigationView
 import dagger.android.support.DaggerFragment
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.AztecText
@@ -38,16 +40,22 @@ abstract class BaseFragment : DaggerFragment() {
     protected fun applyStatusBarStyle(backgroundColor: Int, lumaThreshold: Float = 0.7f) {
         val window = getMainActivity().window
         val brightness = ColorUtils.luminance(backgroundColor)
+        val navMenu : NavigationView = window.findViewById(R.id.nav_view)
+        val header : View = navMenu.getHeaderView(0)
 
         if (brightness > lumaThreshold) {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             getMainActivity().toolbar.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            header.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
             window.decorView.systemUiVisibility = 0 // clear all flags
             getMainActivity().toolbar.systemUiVisibility = 0
+            header.systemUiVisibility = 0
         }
         getMainActivity().toolbar.setBackgroundColor(backgroundColor)
         window.statusBarColor = backgroundColor
+        header.setBackgroundColor(backgroundColor)
+
     }
 
     fun showError(errorMsg: String){

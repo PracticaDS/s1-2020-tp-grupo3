@@ -8,7 +8,7 @@ import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
 import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.services.PostService
-import com.google.firebase.firestore.FirebaseFirestore
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -32,22 +32,28 @@ class PostEditViewModel @Inject constructor(
         val disp = postService.fetchPost(id).map {
             bodyHtml.value = File(context.filesDir, it.bodyPath).readText()
             it
-        }.subscribe{
+        }.subscribe({
             post.value = it
             cardColor.value = it.cardColor
-        }
+        },{
+            Timber.d(it)
+            errors.value = ErrorState.error(it)
+        })
     }
 
 
     fun updatePost() {
         if(titleText.value.toString().isBlank()){
             errors.value = ErrorState.validationError()
+            Timber.d("Error de validación de post")
             return
         }
         val disp = postService.updatePost(post.value!!.uid,cardColor.value!!,bodyText.value!!,titleText.value!!)
             .subscribe({
                 errors.value = null
-            },{throwable -> errors.value = ErrorState.error(throwable)
+            },{throwable ->
+                Timber.d(throwable)
+                errors.value = ErrorState.error(throwable)
             })
 
     }

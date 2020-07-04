@@ -79,7 +79,6 @@ class PostEditFragment : BaseFragment() {
                 count: Int, after: Int
             ) {}
 
-            @SuppressLint("ResourceType")
             override fun onTextChanged(
                 s: CharSequence, start: Int,
                 before: Int, count: Int
@@ -89,7 +88,7 @@ class PostEditFragment : BaseFragment() {
                     btn_save.isEnabled = false
                     btn_save.isClickable = false
                     btn_save.setColorFilter(Color.RED)
-                    Toast.makeText(context,"Enter a title please",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,R.string.empty_title,Toast.LENGTH_SHORT).show()
                 }else{
                     btn_save.isEnabled = true
                     btn_save.isClickable = true

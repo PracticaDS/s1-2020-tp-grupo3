@@ -35,7 +35,6 @@ class PostCreateFragment : BaseFragment() {
             }
             else{
                 if(viewModel.post != 0) {
-                    Timber.d("llego aca")
 
                     findNavController().navigate(
                         PostCreateFragmentDirections.navActionSaveNewPost(viewModel.post)

@@ -1,18 +1,14 @@
 package ar.edu.unq.pdes.myprivateblog.services
 
 import android.content.Context
-import android.graphics.Color
-import android.os.Build
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import ar.edu.unq.pdes.myprivateblog.R
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntriesRepository
 import ar.edu.unq.pdes.myprivateblog.data.BlogEntry
-import ar.edu.unq.pdes.myprivateblog.data.EntityID
 import ar.edu.unq.pdes.myprivateblog.rx.RxSchedulers
 import com.google.android.gms.common.util.Base64Utils
 import com.google.firebase.auth.FirebaseAuth
@@ -20,11 +16,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions
 import io.reactivex.Flowable
-import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import java.io.*
 import java.util.*
-import javax.crypto.SecretKey
 import javax.inject.Inject
 
 class SynchronizeService @Inject constructor(
@@ -70,7 +64,7 @@ class SynchronizeService @Inject constructor(
                 }
                 blogEntries.removeObserver(this.getBlogsObserver)
             }.addOnFailureListener {
-                Toast.makeText(context, "Falopaa", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.sync_failed, Toast.LENGTH_LONG).show()
                 Timber.d(it)
             }
         }
@@ -127,7 +121,14 @@ class SynchronizeService @Inject constructor(
                     batch.delete(dbReference)
                 }
             }.addOnCompleteListener {
-                blogEntriesRepository.deleteAll(deletedBlogs)
+                if(it.isSuccessful) {
+                    blogEntriesRepository.deleteAll(deletedBlogs)
+                    Toast.makeText(context,R.string.sync_success,Toast.LENGTH_LONG).show()
+                }
+                else{
+                    Timber.d(it.exception)
+                    Toast.makeText(context,R.string.sync_failed,Toast.LENGTH_LONG).show()
+                }
                 blogEntries.removeObserver(deleteBlogsObserver)
             }
         }

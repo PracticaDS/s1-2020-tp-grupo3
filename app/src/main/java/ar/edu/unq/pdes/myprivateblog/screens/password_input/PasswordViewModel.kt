@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import ar.edu.unq.pdes.myprivateblog.data.EventTracker
 import ar.edu.unq.pdes.myprivateblog.services.AuthenticationService
+import timber.log.Timber
 import javax.inject.Inject
 
 class PasswordViewModel @Inject constructor(
@@ -18,6 +19,7 @@ class PasswordViewModel @Inject constructor(
 
     fun storePasswordFailed(){
         trackEvents.logEvent("store-password-failed")
+        Timber.d("Falló el guardado del password")
     }
 
 }

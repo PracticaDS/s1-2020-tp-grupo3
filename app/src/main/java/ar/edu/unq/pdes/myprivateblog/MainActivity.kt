@@ -1,9 +1,6 @@
 package ar.edu.unq.pdes.myprivateblog
 
 import android.app.Activity
-import android.graphics.BitmapFactory
-import android.media.Image
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,28 +11,22 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjection.inject
 
 import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
-import java.io.InputStream
-import java.net.URL
-import java.util.Observer
 import javax.inject.Inject
 
 
@@ -68,26 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         inject(this)
         setContentView(R.layout.activity_main)
-        spinner = findViewById(R.id.progressBar1)
-        spinner.visibility = View.GONE
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navView = findViewById(R.id.nav_view)
-
-        toolbar = findViewById(R.id.app_bar)
-        setSupportActionBar(toolbar)
-
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, 0, 0
-        )
-
-
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        navView.bringToFront()
-        navView.setNavigationItemSelectedListener(this)
+        setupUI()
 
         authenticationState.observe(this, androidx.lifecycle.Observer {
             updateUserInfoUI(auth.currentUser)
@@ -121,6 +93,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    fun setupUI(){
+        spinner = findViewById(R.id.progressBar1)
+        spinner.visibility = View.GONE
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+
+        toolbar = findViewById(R.id.app_bar)
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, 0, 0
+        )
+
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        navView.bringToFront()
+        navView.setNavigationItemSelectedListener(this)
+    }
+
     fun hideKeyboard() {
         val imm: InputMethodManager =
             this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -138,7 +132,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_sync -> {
                 spinner.visibility = View.VISIBLE
                 viewModel.sync(spinner,this)
-//                Toast.makeText(this, "Comienzo de sincronizacion", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_logout -> {
                 viewModel.signOut()
