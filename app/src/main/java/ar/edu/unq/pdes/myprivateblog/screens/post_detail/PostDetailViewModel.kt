@@ -41,17 +41,22 @@ class PostDetailViewModel @Inject constructor(
                 bodyHtml.value = File(context.filesDir, it.bodyPath).readText()
                 it
             }.subscribe({
-                Timber.d("OBTENGO POST")
                 post.value = it
-            },{Timber.d(it)})
+            },{
+                Timber.d(it)
+                errors.value = ErrorState.error(it)
+            })
 
 
     }
 
     fun deletePost(){
         val disposable = postService.deletePost(post.value!!).subscribe({
+            trackEvents.logEvent("postDeleted")
             errors.value = null
-        },{throwable -> errors.value = ErrorState.error(throwable)
+        },{throwable ->
+            Timber.d(throwable)
+            errors.value = ErrorState.error(throwable)
         })
 
     }
