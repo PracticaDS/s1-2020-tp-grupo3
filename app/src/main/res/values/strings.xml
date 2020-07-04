@@ -24,4 +24,5 @@
     <string name="sync_failed">Hubo un error al realizar la sincronización</string>
     <string name="sync_success">Sincronización finalizada</string>
     <string name="empty_title">Por favor, ingrese un título</string>
+    <string name="undo_action">Deshacer acción</string>
 </resources>

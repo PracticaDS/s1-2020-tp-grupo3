@@ -18,6 +18,7 @@ import java.io.File
 import android.widget.Toast
 import ar.edu.unq.pdes.myprivateblog.data.ErrorState
 import ar.edu.unq.pdes.myprivateblog.utils.longToast
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_post_detail.body
 import kotlinx.android.synthetic.main.fragment_post_detail.header_background
 import kotlinx.android.synthetic.main.fragment_post_detail.title
@@ -63,6 +64,10 @@ class PostDetailFragment : BaseFragment() {
 
         btn_delete.setOnClickListener {
             viewModel.deletePost()
+            Snackbar.make(it, R.string.succes_msg_post_was_removed, Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo_action) {
+                    viewModel.undoDelete()
+                }.show();
         }
     }
 

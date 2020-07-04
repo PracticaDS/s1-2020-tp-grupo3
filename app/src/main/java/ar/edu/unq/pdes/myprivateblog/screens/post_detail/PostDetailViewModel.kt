@@ -16,6 +16,7 @@ import ar.edu.unq.pdes.myprivateblog.utils.SimpleSuccesMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Flowable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_post_detail.*
 import timber.log.Timber
 import java.io.File
@@ -46,8 +47,6 @@ class PostDetailViewModel @Inject constructor(
                 Timber.d(it)
                 errors.value = ErrorState.error(it)
             })
-
-
     }
 
     fun deletePost(){
@@ -58,7 +57,10 @@ class PostDetailViewModel @Inject constructor(
             Timber.d(throwable)
             errors.value = ErrorState.error(throwable)
         })
+    }
 
+    fun undoDelete() : Disposable {
+        return postService.undoDelete(post.value!!).subscribe()
     }
 
 }
